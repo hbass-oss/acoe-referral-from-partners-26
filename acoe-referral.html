@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACOE Community School Referral System</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0B7691;--teal-d:#085566;--teal-l:#E0F3F8;--teal-mid:#0e8dac;
+  --gold:#F5BB4C;--gold-l:#FEF6DC;--gold-d:#7a5200;
+  --coral:#E5763A;--coral-l:#FDE8E3;--coral-d:#9b2c14;
+  --green:#73B661;--green-l:#EAF5E6;--green-d:#2d6b1f;
+  --red:#DB383B;--red-l:#FCEAEA;
+  --navy:#0a1628;--navy2:#111f38;
+  --ink:#1a2332;--ink2:#2d3f55;--ink3:#4a5e75;--ink4:#8a97a8;
+  --bg:#f2f5f8;--white:#fff;
+  --border:rgba(11,118,145,.15);--border2:rgba(11,118,145,.25);
+  --r:10px;--rlg:16px;--pill:100px;
+  --sh:0 1px 4px rgba(0,0,0,.06),0 4px 20px rgba(0,0,0,.04);
+  --sh-h:0 4px 16px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.08);
+  --font:'Montserrat','Century Gothic','Avenir',sans-serif;
+  --font-serif:'Crimson Pro',Georgia,serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* ── SCREENS ── */
+#login-scr{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:600;padding:1rem;overflow-y:auto}
+#referral-scr,#dash-scr{display:none}
+
+/* ── LOGIN ── */
+.login-wrap{width:100%;max-width:480px}
+.login-logo{text-align:center;margin-bottom:2rem}
+.login-shield{width:64px;height:64px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .85rem;box-shadow:0 0 0 8px rgba(11,118,145,.2)}
+.login-logo h1{font-size:1.35rem;font-weight:800;color:white;letter-spacing:-.02em;line-height:1.2}
+.login-logo h1 span{color:var(--gold)}
+.login-logo p{font-size:.75rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-top:.3rem}
+.login-cards{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.login-card{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--rlg);padding:1.25rem 1rem;cursor:pointer;transition:all .2s;text-align:center}
+.login-card:hover{border-color:var(--teal);background:rgba(11,118,145,.15)}
+.login-card.sel{border-color:var(--gold);background:rgba(245,187,76,.1)}
+.login-card-icon{font-size:1.65rem;margin-bottom:.5rem}
+.login-card-label{font-size:.78rem;font-weight:700;color:white;line-height:1.3}
+.login-card-sub{font-size:.67rem;color:rgba(255,255,255,.4);margin-top:.2rem}
+.lf{margin-bottom:.8rem}
+.lf label{display:block;font-size:.68rem;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.28rem}
+.lf input,.lf select{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:.58rem .85rem;color:white;font-family:var(--font);font-size:.84rem;outline:none;transition:border-color .2s}
+.lf input:focus,.lf select:focus{border-color:var(--teal)}
+.lf input::placeholder{color:rgba(255,255,255,.22)}
+.lf select option{background:var(--navy2);color:white}
+.lerr{color:#f87171;font-size:.75rem;min-height:1em;margin-top:.25rem;text-align:center}
+.lbtn{width:100%;background:var(--teal);color:white;border:none;border-radius:var(--pill);padding:12px;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:background .15s;margin-top:.35rem}
+.lbtn:hover{background:var(--teal-d)}
+.lbtn:disabled{opacity:.5;cursor:not-allowed}
+.lref-btn{width:100%;background:transparent;border:1.5px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);border-radius:var(--pill);padding:11px;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s;margin-top:.5rem}
+.lref-btn:hover{border-color:var(--coral);color:var(--coral)}
+
+/* ── REFERRAL FORM ── */
+#referral-scr{min-height:100vh;background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 55%,#1a2d4f 100%)}
+.ref-bar{background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08);padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.ref-brand{display:flex;align-items:center;gap:.65rem}
+.ref-shield{width:32px;height:32px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ref-name{font-size:.88rem;font-weight:800;color:white;letter-spacing:-.01em}
+.ref-name span{color:var(--gold)}
+.ref-back{background:transparent;border:none;color:rgba(255,255,255,.45);font-size:.76rem;cursor:pointer;font-family:var(--font);padding:.3rem}
+.ref-back:hover{color:white}
+
+/* Steps indicator */
+.steps-bar{padding:1.25rem 1.5rem .5rem;max-width:760px;margin:0 auto}
+.steps{display:flex;align-items:center;gap:0;margin-bottom:.5rem}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.step-dot.done{background:var(--teal);color:white}
+.step-dot.active{background:var(--gold);color:var(--navy)}
+.step-dot.todo{background:rgba(255,255,255,.12);color:rgba(255,255,255,.35)}
+.step-line{flex:1;height:2px;background:rgba(255,255,255,.1);transition:background .2s}
+.step-line.done{background:var(--teal)}
+.steps-labels{display:flex;justify-content:space-between;padding:0 6px}
+.step-lbl{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.3);flex:1;text-align:center}
+.step-lbl.active{color:var(--gold)}
+.step-lbl.done{color:var(--teal)}
+.step-lbl:first-child{text-align:left}
+.step-lbl:last-child{text-align:right}
+
+/* Form sections */
+.ref-main{max-width:760px;margin:0 auto;padding:0 1.5rem 4rem}
+.ref-section{display:none}
+.ref-section.active{display:block;animation:slideIn .22s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:var(--rlg);padding:1.4rem;margin-bottom:.8rem}
+.sec-head{display:flex;align-items:center;gap:.6rem;margin-bottom:1.1rem;padding-bottom:.75rem;border-bottom:1px solid rgba(255,255,255,.07)}
+.sec-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sec-title{font-size:.9rem;font-weight:700;color:white;letter-spacing:-.01em}
+.sec-sub{font-size:.72rem;color:rgba(255,255,255,.35);margin-top:.1rem}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem}
+@media(max-width:560px){.fg2,.fg3{grid-template-columns:1fr}}
+.fc{grid-column:1/-1}
+.rfl{margin-bottom:.7rem}
+.rfl label{display:block;font-size:.68rem;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.26rem}
+.rfl input,.rfl select,.rfl textarea{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:7px;padding:.56rem .8rem;color:white;font-family:var(--font);font-size:.83rem;outline:none;transition:border-color .2s;appearance:none}
+.rfl input:focus,.rfl select:focus,.rfl textarea:focus{border-color:var(--teal);background:rgba(255,255,255,.1)}
+.rfl input::placeholder,.rfl textarea::placeholder{color:rgba(255,255,255,.2)}
+.rfl select option{background:#111f38;color:white}
+.rfl textarea{resize:vertical;min-height:70px;line-height:1.5}
+/* Radio/checkbox chips */
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.3rem}
+.chip{display:inline-flex;align-items:center;gap:.35rem;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:.4rem .7rem;cursor:pointer;transition:all .15s;user-select:none;font-size:.76rem;color:rgba(255,255,255,.75)}
+.chip:hover{border-color:var(--teal)}
+.chip.on{border-color:var(--teal);background:rgba(11,118,145,.2);color:white;font-weight:600}
+.chip-dot{width:12px;height:12px;border:1.5px solid rgba(255,255,255,.3);border-radius:50%;flex-shrink:0;position:relative;transition:all .15s}
+.chip.on .chip-dot{border-color:var(--teal)}
+.chip.on .chip-dot::after{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--teal)}
+.chip-box{width:12px;height:12px;border:1.5px solid rgba(255,255,255,.3);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:white;font-weight:800;transition:all .15s}
+.chip.on .chip-box{background:var(--teal);border-color:var(--teal)}
+/* Care team repeater */
+.ct-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.6rem;position:relative}
+.ct-remove{position:absolute;top:.65rem;right:.75rem;background:none;border:none;color:rgba(255,255,255,.25);font-size:1rem;cursor:pointer;font-family:var(--font);line-height:1;padding:.2rem}
+.ct-remove:hover{color:var(--coral)}
+.add-btn{background:rgba(255,255,255,.06);border:1.5px dashed rgba(255,255,255,.2);color:rgba(255,255,255,.55);border-radius:var(--r);padding:.65rem 1rem;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;width:100%;transition:all .15s;margin-top:.3rem}
+.add-btn:hover{border-color:var(--teal);color:var(--teal)}
+/* Nav buttons */
+.ref-nav{display:flex;gap:.6rem;justify-content:space-between;margin-top:1.25rem}
+.btn-next{background:var(--teal);color:white;border:none;border-radius:var(--pill);padding:11px 28px;font-family:var(--font);font-size:.88rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-next:hover{background:var(--teal-d)}
+.btn-back-f{background:transparent;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);border-radius:var(--pill);padding:10px 22px;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-back-f:hover{border-color:white;color:white}
+.btn-submit{background:var(--gold);color:var(--navy);border:none;border-radius:var(--pill);padding:13px 32px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;transition:all .15s}
+.btn-submit:hover{background:#e5a800}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+/* Confirm screen */
+.cfm{text-align:center;padding:3rem 1.5rem;color:white}
+.cfm-icon{width:72px;height:72px;background:rgba(11,118,145,.2);border:2px solid var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;font-size:2rem}
+.cfm h2{font-size:1.5rem;font-weight:800;margin-bottom:.5rem;letter-spacing:-.02em}
+.cfm p{color:rgba(255,255,255,.5);font-size:.88rem;line-height:1.7;max-width:400px;margin:0 auto 1.5rem}
+.cfm-ref{font-family:'Crimson Pro',serif;font-size:1.1rem;color:var(--gold);margin-bottom:1.5rem}
+
+/* ── DASHBOARD ── */
+.topbar{background:var(--navy);color:white;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 1.3rem;position:sticky;top:0;z-index:200;gap:.5rem;border-bottom:2px solid var(--teal)}
+.tbar-brand{display:flex;align-items:center;gap:.65rem;flex-shrink:0}
+.tbar-shield{width:30px;height:30px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.tbar-name{font-size:.85rem;font-weight:800;letter-spacing:-.01em}
+.tbar-name span{color:var(--gold)}
+.tbar-user{font-size:.67rem;color:rgba(255,255,255,.3);font-family:'Crimson Pro',serif;font-style:italic}
+.tbar-r{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.tbtn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.8);border-radius:var(--pill);padding:4px 12px;font-family:var(--font);font-size:.71rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tbtn:hover{background:var(--teal);border-color:var(--teal);color:white}
+/* Tabs */
+.dash-tabs{background:var(--navy2);border-bottom:1px solid rgba(255,255,255,.07);padding:0 1.3rem;display:flex;gap:0;overflow-x:auto}
+.dtab{padding:.6rem 1rem;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.38);cursor:pointer;border:none;border-bottom:2.5px solid transparent;background:none;font-family:var(--font);white-space:nowrap;transition:all .15s}
+.dtab:hover{color:rgba(255,255,255,.7)}
+.dtab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.dash-main{max-width:1140px;margin:0 auto;padding:1.3rem 1.1rem}
+.dview{display:none}
+.dview.on{display:block;animation:fi .18s ease}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+/* Stats */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.65rem;margin-bottom:1.15rem}
+.dstat{background:white;border-radius:var(--r);border:1px solid var(--border);padding:.85rem .95rem;box-shadow:var(--sh)}
+.dstat-n{font-size:1.85rem;font-weight:800;line-height:1;margin-bottom:.08rem;font-family:'Crimson Pro',serif}
+.dstat-l{font-size:.67rem;color:var(--ink4);line-height:1.4}
+/* Sync bar */
+.sbar{border-radius:var(--r);padding:.55rem .95rem;margin-bottom:1.05rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;font-size:.76rem;background:var(--gold-l);border:1px solid rgba(245,187,76,.25);color:var(--gold-d)}
+.sbar.ok{background:var(--teal-l);border-color:rgba(11,118,145,.2);color:var(--teal-d)}
+/* Search row */
+.srow{display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap;align-items:center}
+.sinp{flex:1;min-width:170px;border:1.5px solid var(--border2);border-radius:var(--pill);padding:6px 14px;font-family:var(--font);font-size:.8rem;outline:none;transition:border-color .2s;background:white}
+.sinp:focus{border-color:var(--teal)}
+.fchip{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--pill);padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;color:var(--ink3);transition:all .15s}
+.fchip.on{background:var(--navy);color:white;border-color:var(--navy)}
+/* Referral cards */
+.rcard{background:white;border-radius:var(--rlg);border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden;margin-bottom:.65rem;transition:box-shadow .15s}
+.rcard:hover{box-shadow:var(--sh-h)}
+.rch{padding:.8rem 1.05rem;display:flex;align-items:center;gap:.75rem;cursor:pointer}
+.rch-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0;font-family:'Crimson Pro',serif}
+.rch-info{flex:1;min-width:0}
+.rch-name{font-weight:700;font-size:.9rem;color:var(--ink)}
+.rch-meta{font-size:.69rem;color:var(--ink4);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rch-tags{display:flex;flex-wrap:wrap;gap:.2rem;margin-left:auto;flex-shrink:0}
+.btag{display:inline-flex;align-items:center;font-size:.61rem;font-weight:700;border-radius:var(--pill);padding:2px 7px;white-space:nowrap}
+.btag-new{background:#FEF6DC;color:var(--gold-d)}
+.btag-pending{background:var(--teal-l);color:var(--teal-d)}
+.btag-enrolled{background:var(--green-l);color:var(--green-d)}
+.btag-site{background:#f0f3f8;color:var(--ink3)}
+.btag-prob{background:#EDE9FE;color:#4c1d95}
+.btag-fc{background:#FCE7F3;color:#9d174d}
+.btag-dist{background:var(--coral-l);color:var(--coral-d)}
+.btag-jjc{background:var(--red-l);color:#991b1b}
+/* Detail panel */
+.rdet{display:none;border-top:1px solid var(--border)}
+.rdet.open{display:block}
+/* Info grid */
+.det-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;padding:.9rem 1.05rem;background:white;border-bottom:1px solid var(--border)}
+@media(max-width:560px){.det-grid{grid-template-columns:1fr 1fr}}
+.dg{font-size:.8rem}
+.dg-l{font-size:.63rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.12rem}
+/* Section panels */
+.det-sec{border-top:1px solid var(--border);background:#fafbfd}
+.det-sec-hd{padding:.65rem 1.05rem;display:flex;align-items:center;gap:.55rem;cursor:pointer;background:#f5f8fb;border-left:4px solid var(--sc,var(--teal))}
+.det-sec-hd:hover{background:#eff4f8}
+.det-sec-icon{width:26px;height:26px;border-radius:6px;background:var(--sc,var(--teal));display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.det-sec-title{font-size:.82rem;font-weight:700;color:var(--ink2);flex:1}
+.det-sec-chev{font-size:.65rem;color:var(--ink4);transition:transform .2s}
+.det-sec-body{display:none;padding:.9rem 1.05rem}
+.det-sec-body.open{display:block}
+/* Status + actions */
+.det-actions{display:flex;gap:.4rem;padding:.75rem 1.05rem;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center;background:white}
+.stat-sel{border:1.5px solid var(--border2);border-radius:6px;padding:5px 9px;font-family:var(--font);font-size:.76rem;color:var(--ink);outline:none;background:white;transition:border-color .2s;cursor:pointer}
+.stat-sel:focus{border-color:var(--teal)}
+.site-sel{border:1.5px solid var(--border2);border-radius:6px;padding:5px 9px;font-family:var(--font);font-size:.76rem;color:var(--ink);outline:none;background:white;flex:1;min-width:160px;transition:border-color .2s;cursor:pointer}
+.site-sel:focus{border-color:var(--teal)}
+.notes-ta{width:100%;border:1.5px solid var(--border2);border-radius:7px;padding:.45rem .7rem;font-family:var(--font);font-size:.79rem;resize:vertical;min-height:52px;outline:none;margin-top:.5rem;transition:border-color .2s;color:var(--ink);line-height:1.5}
+.notes-ta:focus{border-color:var(--teal)}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:4px;border:none;border-radius:var(--pill);padding:7px 15px;font-family:var(--font);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btnp{background:var(--teal);color:white}
+.btnp:hover{background:var(--teal-d)}
+.btng{background:transparent;border:1.5px solid var(--border2);color:var(--ink3)}
+.btng:hover{border-color:var(--teal);color:var(--teal)}
+.btnd{background:var(--red-l);color:var(--red);border:1px solid rgba(219,56,59,.18)}
+.btnd:hover{background:var(--red);color:white}
+.bsm{padding:4px 10px;font-size:.7rem}
+/* Staff add form */
+.fg2s{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+@media(max-width:540px){.fg2s{grid-template-columns:1fr}}
+.sfld{display:flex;flex-direction:column;gap:.2rem}
+.sfld label{font-size:.68rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.sfld input,.sfld select,.sfld textarea{border:1.5px solid var(--border2);border-radius:7px;padding:.52rem .78rem;font-family:var(--font);font-size:.83rem;color:var(--ink);outline:none;transition:border-color .2s;background:white;width:100%}
+.sfld input:focus,.sfld select:focus,.sfld textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,118,145,.08)}
+.sfld textarea{resize:vertical;min-height:65px;line-height:1.5}
+.fsec-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin:1rem 0 .55rem;display:flex;align-items:center;gap:.45rem}
+.fsec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Setup modal */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:700;align-items:flex-start;justify-content:center;padding:1.25rem;overflow-y:auto}
+.mov.open{display:flex}
+.mbox{background:white;border-radius:var(--rlg);padding:1.65rem;max-width:700px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.28);margin:auto}
+.mbox h3{font-size:1rem;font-weight:800;margin-bottom:.28rem;color:var(--ink)}
+.mbox>p{font-size:.79rem;color:var(--ink3);line-height:1.6;margin-bottom:.9rem}
+.mstep{background:#f8fafc;border-radius:8px;padding:.85rem .95rem;margin:.6rem 0;border-left:3px solid var(--teal)}
+.mstep h4{font-size:.79rem;font-weight:700;color:var(--teal-d);margin-bottom:.3rem}
+.mstep p,.mstep li{font-size:.76rem;color:var(--ink2);line-height:1.6}
+.mstep ul{margin-left:1rem;margin-top:.2rem}
+.code-blk{background:var(--navy);color:#7effd4;font-family:'Crimson Pro',monospace;font-size:.67rem;border-radius:6px;padding:.65rem .85rem;margin:.35rem 0;line-height:1.75;white-space:pre-wrap;word-break:break-all;max-height:360px;overflow-y:auto}
+.mfoot{display:flex;gap:.38rem;justify-content:flex-end;margin-top:1rem}
+.urow{display:flex;gap:.45rem;margin-top:.45rem}
+.uinp{flex:1;border:1.5px solid var(--border2);border-radius:7px;padding:5px 9px;font-family:'Crimson Pro',monospace;font-size:.72rem;outline:none;transition:border-color .2s;color:var(--ink)}
+.uinp:focus{border-color:var(--teal)}
+/* Toast */
+.toast{position:fixed;bottom:1.1rem;right:1.1rem;background:var(--ink);color:white;padding:.65rem 1rem;border-radius:var(--r);font-size:.76rem;box-shadow:0 8px 24px rgba(0,0,0,.22);transform:translateY(56px);opacity:0;transition:all .26s;z-index:999;max-width:320px;line-height:1.5;border-left:3px solid var(--teal)}
+.toast.show{transform:translateY(0);opacity:1}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--ink4)}
+.empty-ico{font-size:1.9rem;margin-bottom:.35rem;opacity:.28}
+.req{color:var(--coral);font-size:.85em}
+.hint{font-size:.69rem;color:rgba(255,255,255,.3);margin-top:.3rem;line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-scr">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-shield">
+        <svg viewBox="0 0 24 24" fill="none" width="30" height="30">
+          <path d="M12 2L3 6v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V6L12 2z" fill="rgba(255,255,255,.15)" stroke="white" stroke-width="1.2"/>
+          <path d="M9 12l2 2 4-4" stroke="#F5BB4C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>ACOE <span>Community Schools</span></h1>
+      <p>Referral & Enrollment System</p>
+    </div>
+    <div class="login-cards" id="role-cards">
+      <div class="login-card" onclick="selectRole('probation',this)">
+        <div class="login-card-icon">⚖️</div>
+        <div class="login-card-label">Probation / JJC</div>
+        <div class="login-card-sub">Referring a youth</div>
+      </div>
+      <div class="login-card" onclick="selectRole('foster',this)">
+        <div class="login-card-icon">🏠</div>
+        <div class="login-card-label">Foster Care / SSA</div>
+        <div class="login-card-sub">Social Services referral</div>
+      </div>
+      <div class="login-card" onclick="selectRole('district',this)">
+        <div class="login-card-icon">🏫</div>
+        <div class="login-card-label">School District</div>
+        <div class="login-card-sub">Expulsion or transition</div>
+      </div>
+      <div class="login-card" onclick="selectRole('acoe',this)">
+        <div class="login-card-icon">🔐</div>
+        <div class="login-card-label">ACOE Staff</div>
+        <div class="login-card-sub">Dashboard access</div>
+      </div>
+    </div>
+    <div id="login-form-area"></div>
+    <div class="lerr" id="l-err"></div>
+  </div>
+</div>
+
+<!-- ══════════════ REFERRAL FORM ══════════════ -->
+<div id="referral-scr">
+  <div class="ref-bar">
+    <div class="ref-brand">
+      <div class="ref-shield">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+          <path d="M10 2L3 5v5c0 4.4 3 8.5 7 9.6 4-1.1 7-5.2 7-9.6V5L10 2z" fill="rgba(255,255,255,.2)" stroke="white" stroke-width="1.2"/>
+          <path d="M7.5 10l1.8 1.8L13 8" stroke="#F5BB4C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="ref-name">ACOE <span>Community Schools</span> · Referral Form</span>
+    </div>
+    <button class="ref-back" onclick="goLogin()">← Back to login</button>
+  </div>
+
+  <div class="steps-bar">
+    <div class="steps" id="steps-dots"></div>
+    <div class="steps-labels" id="steps-labels"></div>
+  </div>
+
+  <div class="ref-main" id="ref-main"></div>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="app-scr">
+  <div class="topbar">
+    <div class="tbar-brand">
+      <div class="tbar-shield">
+        <svg viewBox="0 0 18 18" fill="none" width="14" height="14">
+          <path d="M9 1.5L2.25 4.5v4.5c0 3.96 2.7 7.65 6.75 8.64 4.05-.99 6.75-4.68 6.75-8.64V4.5L9 1.5z" fill="rgba(255,255,255,.2)" stroke="white" stroke-width="1"/>
+          <path d="M6.75 9l1.62 1.62L11.25 7.5" stroke="#F5BB4C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="tbar-name">ACOE <span>Schools</span> · Referral Dashboard</span>
+    </div>
+    <div class="tbar-r">
+      <span class="tbar-user" id="tbar-user"></span>
+      <button class="tbtn" onclick="openSetup()">⚙ Sheet</button>
+      <button class="tbtn" onclick="goReferral()">+ New Referral</button>
+      <button class="tbtn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="dash-tabs">
+    <button class="dtab on" data-tab="queue" onclick="switchTab(this)">Referral Queue</button>
+    <button class="dtab" data-tab="add" onclick="switchTab(this)">Add Manually</button>
+    <button class="dtab" data-tab="sites" onclick="switchTab(this)">School Sites</button>
+    <button class="dtab" data-tab="alerts" onclick="switchTab(this)">Staff Alerts ✉</button>
+  </div>
+  <div class="dash-main">
+
+    <!-- QUEUE -->
+    <div id="dtab-queue" class="dview on">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.1rem">
+        <div><h1 style="font-size:1.2rem;font-weight:800;color:var(--ink);letter-spacing:-.02em">Referral Queue</h1><p style="font-size:.78rem;color:var(--ink4);margin-top:.1rem">All incoming referrals · shared with ACOE leadership in real time</p></div>
+        <div style="display:flex;gap:.35rem;flex-wrap:wrap">
+          <button class="btn btng bsm" id="ref-btn" onclick="loadFromSheet()">↻ Refresh</button>
+          <button class="btn btnp bsm" onclick="exportCSV()">↓ Export CSV</button>
+        </div>
+      </div>
+      <div class="sbar" id="sbar"><span id="sbar-msg">⚠ Not connected to Google Sheet. Click ⚙ Sheet to connect.</span><button class="btn bsm" style="background:var(--gold);color:var(--navy);border:none" onclick="openSetup()">Connect</button></div>
+      <div class="dash-stats" id="dstats"></div>
+      <div class="srow">
+        <input class="sinp" id="srch" placeholder="Search name, DOB, referring party, school district…" oninput="renderQueue()">
+        <button class="fchip" onclick="setF('all',this)">All</button>
+        <button class="fchip" onclick="setF('urgent',this)">🔴 7+ Days Open</button>
+        <button class="fchip" onclick="setF('new',this)">New</button>
+        <button class="fchip" onclick="setF('pending',this)">In Progress</button>
+        <button class="fchip" onclick="setF('enrolled',this)">Enrolled</button>
+        <button class="fchip" onclick="setF('probation',this)">Probation</button>
+        <button class="fchip" onclick="setF('foster',this)">Foster Care</button>
+        <button class="fchip" onclick="setF('district',this)">District</button>
+      </div>
+      <div id="rqueue"></div>
+    </div>
+
+    <!-- ADD MANUALLY -->
+    <div id="dtab-add" class="dview">
+      <div style="margin-bottom:1.1rem"><h1 style="font-size:1.2rem;font-weight:800;color:var(--ink);letter-spacing:-.02em">Add Referral Manually</h1><p style="font-size:.78rem;color:var(--ink4);margin-top:.1rem">For walk-in or phone referrals received outside the digital form</p></div>
+      <div style="background:white;border-radius:var(--rlg);border:1px solid var(--border);box-shadow:var(--sh);padding:1.2rem">
+        <div class="fg2s">
+          <div class="sfld"><label>First Name *</label><input id="mf-first"></div>
+          <div class="sfld"><label>Last Name *</label><input id="mf-last"></div>
+          <div class="sfld"><label>Date of Birth</label><input type="date" id="mf-dob"></div>
+          <div class="sfld"><label>Age</label><input type="number" id="mf-age"></div>
+          <div class="sfld"><label>Grade</label><input id="mf-grade"></div>
+          <div class="sfld"><label>Gender</label>
+            <select id="mf-gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Non-binary</option></select>
+          </div>
+          <div class="sfld"><label>Referral Type</label>
+            <select id="mf-reftype">
+              <option value="">Select</option>
+              <option value="probation">Probation / JJC Release</option>
+              <option value="foster">Foster Care / SSA</option>
+              <option value="district">District Expulsion</option>
+              <option value="district-trans">District Transition</option>
+              <option value="truant">Chronic Truancy (601)</option>
+            </select>
+          </div>
+          <div class="sfld"><label>Program Being Referred To</label>
+            <select id="mf-program">
+              <option value="">Select</option>
+              <option>Quest – Oakland</option>
+              <option>Quest – Hayward</option>
+              <option>Quest – Emerge Oakland</option>
+              <option>Burke Academy – Hayward</option>
+              <option>Carolyn Hobbs Academy – San Leandro</option>
+              <option>Parenting Teen Program</option>
+              <option>Butler Academic Center (JJC)</option>
+            </select>
+          </div>
+          <div class="sfld"><label>District of Residence</label><input id="mf-district"></div>
+          <div class="sfld"><label>Referring Party Name</label><input id="mf-ref-name"></div>
+          <div class="sfld"><label>Referring Party Phone</label><input type="tel" id="mf-ref-ph"></div>
+          <div class="sfld"><label>Referring Party Email</label><input type="email" id="mf-ref-em"></div>
+        </div>
+        <div class="fsec-lbl">Notes</div>
+        <div class="sfld" style="grid-column:1/-1"><textarea id="mf-notes" rows="3" placeholder="Context, special circumstances, care team notes…"></textarea></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.1rem;padding-top:.85rem;border-top:1px solid var(--border)">
+          <button class="btn btng" onclick="clearManual()">Clear</button>
+          <button class="btn btnp" id="msave-btn" onclick="saveManual()">Add Referral →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITES -->
+    <div id="dtab-sites" class="dview">
+      <h1 style="font-size:1.2rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:1.1rem">ACOE School Sites</h1>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.8rem">
+        ${[
+          ['Quest – Oakland','Independent Study','510-879-8001','quest-oakland@acoe.org'],
+          ['Quest – Hayward','Independent Study','510-670-4590','quest-hayward@acoe.org'],
+          ['Quest – Emerge Oakland','Independent Study · Reentry Focus','510-879-8001','emerge@acoe.org'],
+          ['Burke Academy','Parenting Teen Program · Hayward','510-670-4590','burke@acoe.org'],
+          ['Carolyn Hobbs Academy','Parenting Teen Program · San Leandro','510-670-4590','hobbs@acoe.org'],
+          ['Butler Academic Center','JJC Court School','510-670-7609','butler@acoe.org'],
+          ['Camp Sweeney','Camp School','510-670-4590','sweeney@acoe.org'],
+        ].map(([name,desc,ph,em])=>`<div style="background:white;border-radius:var(--rlg);border:1px solid var(--border);box-shadow:var(--sh);padding:1.1rem">
+          <div style="font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:.2rem">${name}</div>
+          <div style="font-size:.74rem;color:var(--teal);font-weight:600;margin-bottom:.55rem">${desc}</div>
+          <div style="font-size:.76rem;color:var(--ink3)">${ph}</div>
+          <div style="font-size:.76rem;color:var(--ink3)">${em}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div id="dtab-alerts" class="dview">
+      <div style="margin-bottom:1.1rem">
+        <h1 style="font-size:1.2rem;font-weight:800;color:var(--ink);letter-spacing:-.02em">Staff Alert Emails</h1>
+        <p style="font-size:.78rem;color:var(--ink4);margin-top:.1rem">Manage who gets notified when new referrals arrive. Use the "✉ Alert Staff" button on any referral to send a targeted alert.</p>
+      </div>
+      <div style="background:white;border-radius:var(--rlg);border:1px solid var(--border);box-shadow:var(--sh);padding:1.2rem;max-width:600px">
+        <div style="font-size:.78rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">ACOE Staff Alert List</div>
+        <div id="alert-list"></div>
+        <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+          <input id="alert-name-inp" class="sinp" placeholder="Staff member name" style="flex:1;min-width:130px;border-radius:7px">
+          <input id="alert-email-inp" class="sinp" placeholder="email@acoe.org" type="email" style="flex:1.4;min-width:170px;border-radius:7px">
+          <button class="btn btnp bsm" onclick="addAlertEmail()">+ Add</button>
+        </div>
+        <div style="margin-top:1.1rem;padding-top:.85rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--ink4);line-height:1.65">
+          Staff on this list appear in the <strong>✉ Alert Staff</strong> panel on each referral card. Select who should be notified and the app opens a pre-filled email in your mail client. Alert history is saved on each referral record.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════ ALERT PANEL ══════════════ -->
+<div class="mov" id="alert-mov">
+  <div class="mbox" style="max-width:480px">
+    <h3>✉ Alert Staff About This Referral</h3>
+    <p id="alert-panel-sub" style="font-size:.79rem;color:var(--ink3);line-height:1.6;margin-bottom:.9rem"></p>
+    <div id="alert-staff-list"></div>
+    <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);font-size:.74rem;color:var(--ink4)">Select staff members to notify, then click Send. This opens a pre-filled email in your mail client. To manage this list, go to the Staff Alerts tab.</div>
+    <div class="mfoot">
+      <button class="btn btng bsm" onclick="S('alert-mov').classList.remove('open')">Cancel</button>
+      <button class="btn btnp bsm" id="alert-send-btn" onclick="sendAlertEmails()">Send Alert →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SETUP MODAL ══════════════ -->
+<div class="mov" id="setup-mov">
+  <div class="mbox">
+    <h3>⚙ Connect to Google Sheets</h3>
+    <p>One-time setup. Every referral submission will write to your shared Sheet in real time.</p>
+    <div class="mstep"><h4>Step 1 — Create a Google Sheet</h4><p>sheets.google.com → blank spreadsheet → name it <em>ACOE Community School Referrals</em>.</p></div>
+    <div class="mstep"><h4>Step 2 — Paste this Apps Script</h4><p><strong>Extensions → Apps Script</strong> → delete everything → paste below → replace <code style="background:#f0f3f8;padding:1px 4px;border-radius:3px;font-size:.74rem">YOUR_SHEET_ID</code> with the ID from your Sheet URL.</p><div class="code-blk" id="script-block"></div></div>
+    <div class="mstep"><h4>Step 3 — Deploy as Web App</h4><ul><li>Deploy → New deployment → Web app</li><li>Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong></li><li>Deploy → authorize → copy the URL</li></ul><p style="margin-top:.4rem;color:var(--coral);font-weight:600">⚠ Must be "Anyone" (not "Anyone with Google account"). Create a new deployment after every script edit.</p></div>
+    <div class="mstep"><h4>Step 4 — Paste the URL</h4><div class="urow"><input class="uinp" id="url-inp" type="url" placeholder="https://script.google.com/macros/s/…"><button class="btn btnp bsm" onclick="connectSheet()">Connect</button></div></div>
+    <div class="mfoot"><button class="btn btng bsm" onclick="closeSetup()">Close</button><button class="btn btng bsm" onclick="testConn()">Test</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════ CONFIG ═══════════════════════
+const ACOE_CODE = 'ACOE2025';
+const ACOE_PROGRAMS = [
+  'Quest – Oakland','Quest – Hayward','Quest – Emerge Oakland',
+  'Burke Academy – Hayward','Carolyn Hobbs Academy – San Leandro',
+  'Parenting Teen Program','Butler Academic Center (JJC)','Camp Sweeney'
+];
+const AVC=[['#0B7691','#E0F3F8'],['#E5763A','#FDE8E3'],['#73B661','#EAF5E6'],
+           ['#F5BB4C','#FEF6DC'],['#DB383B','#FCEAEA'],['#9BAB8E','#EEF2EB']];
+
+// Steps for the referral form
+const STEPS = ['Program & Referral Type','Student Information','Family / Guardian',
+               'Special Education & Language','Referring Party','Professional & System Supports',
+               'Student Voice','Safety & Wellness','Care Team','Documents & Notes'];
+
+// ═══════════════════ STATE ═══════════════════════
+let WHO='', ORG='', ROLE='', FILTER='all';
+let REFS = JSON.parse(localStorage.getItem('acoe_refs')||'[]');
+let SURL = localStorage.getItem('acoe_url')||'';
+let ALERT_EMAILS = JSON.parse(localStorage.getItem('acoe_alerts')||'[]');
+let CURRENT_STEP = 0;
+let CARE_TEAM = [];
+// Persists all chip/field values across steps so submitReferral can read them even after DOM rebuilds
+let FORM_DATA = {};
+
+// ═══════════════════ SCREENS ═════════════════════
+const S = id => document.getElementById(id);
+function show(id,d='block'){S(id).style.display=d}
+function hide(id){S(id).style.display='none'}
+function showLogin() { show('login-scr','flex'); hide('referral-scr'); hide('app-scr'); }
+function showReferral(){ hide('login-scr'); show('referral-scr'); hide('app-scr'); }
+function showDash()  { hide('login-scr'); hide('referral-scr'); show('app-scr'); }
+function goLogin()   { showLogin(); }
+function logout()    { WHO='';ORG='';ROLE=''; goLogin(); }
+function goReferral(){ resetReferral(); showReferral(); }
+
+// ═══════════════════ ROLE SELECT ═════════════════
+function selectRole(role, card) {
+  ROLE = role;
+  document.querySelectorAll('.login-card').forEach(c=>c.classList.remove('sel'));
+  card.classList.add('sel');
+  renderLoginForm();
+}
+
+function renderLoginForm() {
+  const area = S('login-form-area');
+  if (ROLE === 'acoe') {
+    area.innerHTML = `
+      <div class="lf"><label>Your Name</label><input id="l-name" placeholder="Full name"></div>
+      <div class="lf"><label>Role / Title</label>
+        <select id="l-title">
+          <option value="">Select your role</option>
+          <option>Principal</option><option>Assistant Principal</option>
+          <option>Social Worker</option><option>Teacher</option>
+          <option>Para-Educator</option><option>Enrollment Coordinator</option>
+          <option>ACOE Leadership</option><option>ACOE Admin</option>
+        </select>
+      </div>
+      <div class="lf"><label>Access Code</label><input type="password" id="l-pass" placeholder="Staff access code" onkeydown="if(event.key==='Enter')login()"></div>
+      <button class="lbtn" onclick="login()">Access Dashboard →</button>`;
+  } else {
+    const roleLabel = {probation:'Probation / JJC', foster:'Foster Care / SSA', district:'School District'}[ROLE];
+    area.innerHTML = `
+      <div class="lf"><label>Your Name</label><input id="l-name" placeholder="Full name"></div>
+      <div class="lf"><label>Your Organization / Agency</label><input id="l-org" placeholder="${roleLabel}"></div>
+      <button class="lbtn" onclick="startReferral()">Start Referral Form →</button>
+      <button class="lref-btn" onclick="selectRole('acoe',document.querySelector('[onclick*=acoe]'))">ACOE staff? Access dashboard →</button>`;
+  }
+}
+
+function login() {
+  const name = (S('l-name')||{}).value||''; const title = (S('l-title')||{}).value||''; const pass = S('l-pass').value||'';
+  if (!name){S('l-err').textContent='Please enter your name.';return;}
+  if (!title){S('l-err').textContent='Please select your role.';return;}
+  if (pass !== ACOE_CODE){S('l-err').textContent='Incorrect access code.';return;}
+  S('l-err').textContent=''; WHO=name; ORG='ACOE'; ROLE='acoe';
+  S('tbar-user').textContent = name + ' · ' + title;
+  showDash(); updateSyncBar();
+  if(SURL) loadFromSheet(); else renderQueue();
+}
+
+function startReferral() {
+  const name = (S('l-name')||{}).value||''; const org = (S('l-org')||{}).value||'';
+  if (!name){S('l-err').textContent='Please enter your name.';return;}
+  S('l-err').textContent=''; WHO=name; ORG=org;
+  resetReferral(); showReferral();
+}
+
+// ═══════════════════ REFERRAL FORM ═══════════════
+function resetReferral(){
+  CURRENT_STEP=0; CARE_TEAM=[]; FORM_DATA={};
+  buildStepIndicator();
+  buildStep();
+}
+
+function buildStepIndicator(){
+  const dots = S('steps-dots'); const lbls = S('steps-labels');
+  dots.innerHTML=''; lbls.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    if(i>0) dots.innerHTML+=`<div class="step-line ${i<=CURRENT_STEP?'done':''}"></div>`;
+    const cls=i<CURRENT_STEP?'done':i===CURRENT_STEP?'active':'todo';
+    dots.innerHTML+=`<div class="step-dot ${cls}">${i<CURRENT_STEP?'✓':i+1}</div>`;
+    lbls.innerHTML+=`<div class="step-lbl ${i<CURRENT_STEP?'done':i===CURRENT_STEP?'active':''}">${s}</div>`;
+  });
+}
+
+function buildStep() {
+  buildStepIndicator();
+  const c = S('ref-main'); c.innerHTML='';
+  const isLast = CURRENT_STEP===STEPS.length-1;
+  const backBtn = CURRENT_STEP>0?`<button class="btn-back-f" onclick="prevStep()">← Back</button>`:`<div></div>`;
+  const nextBtn = isLast
+    ? `<button class="btn-submit" id="ref-submit" onclick="submitReferral()">Submit Referral →</button>`
+    : `<button class="btn-next" onclick="nextStep()">Continue →</button>`;
+
+  let html = '';
+  switch(CURRENT_STEP){
+    case 0: html=stepProgram(); break;
+    case 1: html=stepStudent(); break;
+    case 2: html=stepFamily(); break;
+    case 3: html=stepSped(); break;
+    case 4: html=stepReferrer(); break;
+    case 5: html=stepProfSupports(); break;
+    case 6: html=stepStudentVoice(); break;
+    case 7: html=stepSafety(); break;
+    case 8: html=stepCareTeam(); break;
+    case 9: html=stepDocs(); break;
+  }
+  c.innerHTML=`${html}<div class="ref-nav">${backBtn}${nextBtn}</div>`;
+}
+
+function secCard(icon, iconBg, title, sub, content){
+  return `<div class="sec-card"><div class="sec-head"><div class="sec-icon" style="background:${iconBg}">${icon}</div><div><div class="sec-title">${title}</div>${sub?`<div class="sec-sub">${sub}</div>`:''}</div></div>${content}</div>`;
+}
+function rfl(label, id, type='text', placeholder='', required=false){
+  return `<div class="rfl"><label>${label}${required?'<span class="req"> *</span>':''}</label><input type="${type}" id="${id}" placeholder="${placeholder}"></div>`;
+}
+function rsel(label, id, options, required=false){
+  return `<div class="rfl"><label>${label}${required?'<span class="req"> *</span>':''}</label><select id="${id}"><option value="">Select…</option>${options.map(o=>typeof o==='string'?`<option>${o}</option>`:`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></div>`;
+}
+function chips(label, id, items, multi=false){
+  return `<div class="rfl"><label>${label}</label><div class="chips">${items.map(it=>`<div class="chip" onclick="${multi?'toggleChip':'pickChip'}(this,'${id}')">${multi?'<div class="chip-box"></div>':'<div class="chip-dot"></div>'}${it}</div>`).join('')}</div></div>`;
+}
+function pickChip(el,grp){document.querySelectorAll(`.chip[onclick*="${grp}"]`).forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+function toggleChip(el){el.classList.toggle('on');}
+function getChips(grp,single=false){
+  const all=[...document.querySelectorAll(`.chip[onclick*="${grp}"].on`)].map(e=>e.textContent.trim().replace(/^[✓□]/,'').trim());
+  return single?all[0]||'':all;
+}
+
+function stepProgram(){return secCard('🎓','#0B7691','Program & Referral Type','Select the ACOE program being referred to and the reason for referral',`
+  <div class="fg2">
+    ${rsel('Program Being Referred To','rf-program',ACOE_PROGRAMS,true)}
+    <div class="rfl"><label>School Year</label><input id="rf-year" placeholder="${new Date().getFullYear()}-${new Date().getFullYear()+1}"></div>
+    <div class="rfl fc"><label>Referral Type <span class="req">*</span></label>
+      <div class="chips">
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>Probation – 602 Formal Probation</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>Probation – 601 Referred by Probation</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>JJC Release</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>Foster Care / SSA – 300 Social Services</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>District Expulsion</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>District Transition</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>Chronic Truancy (601)</div>
+        <div class="chip" onclick="pickChip(this,'rf-reftype');showExpulsion()"><div class="chip-dot"></div>Pregnant / Parenting Teen</div>
+      </div>
+    </div>
+    <div id="expulsion-fields" style="display:none;grid-column:1/-1">
+      <div class="fg2">
+        ${rfl('District Which Expelled','rf-exp-dist')}
+        <div class="rfl"><label>Expulsion Start Date</label><input type="date" id="rf-exp-start"></div>
+        <div class="rfl"><label>Expulsion End Date</label><input type="date" id="rf-exp-end"></div>
+        <div class="rfl"><label>Re-admission contingent on Rehab Plan?</label>
+          <div class="chips"><div class="chip" onclick="pickChip(this,'rf-rehab')"><div class="chip-dot"></div>Yes</div><div class="chip" onclick="pickChip(this,'rf-rehab')"><div class="chip-dot"></div>No</div></div>
+        </div>
+        <div class="rfl"><label>Hours of Counseling Required</label><input type="number" id="rf-exp-hrs-csl" placeholder="0"></div>
+        <div class="rfl"><label>Hours of Community Service Required</label><input type="number" id="rf-exp-hrs-cs" placeholder="0"></div>
+        <div class="rfl"><label>Letter / Essay Required?</label>
+          <div class="chips"><div class="chip" onclick="pickChip(this,'rf-essay')"><div class="chip-dot"></div>Yes</div><div class="chip" onclick="pickChip(this,'rf-essay')"><div class="chip-dot"></div>No</div></div>
+        </div>
+      </div>
+    </div>
+  </div>`);}
+
+function showExpulsion(){
+  const v=getChips('rf-reftype',true);
+  const el=document.getElementById('expulsion-fields');
+  if(el) el.style.display=(v&&v.toLowerCase().includes('expul'))?'block':'none';
+}
+
+function stepStudent(){return secCard('👤','#E5763A','Student Information','Legal name and demographics from official records',`
+  <div class="fg2">
+    ${rfl('Legal First Name','rf-first','text','',true)}
+    ${rfl('Middle Name','rf-middle')}
+    ${rfl('Legal Last Name','rf-last','text','',true)}
+    ${rfl('Nickname / Preferred Name','rf-nick')}
+    <div class="rfl"><label>Date of Birth <span class="req">*</span></label><input type="date" id="rf-dob"></div>
+    ${rfl('Age','rf-age','number')}
+    ${rfl('Grade','rf-grade')}
+    <div class="rfl"><label>Gender</label>
+      <div class="chips"><div class="chip" onclick="pickChip(this,'rf-gender')"><div class="chip-dot"></div>Male</div><div class="chip" onclick="pickChip(this,'rf-gender')"><div class="chip-dot"></div>Female</div><div class="chip" onclick="pickChip(this,'rf-gender')"><div class="chip-dot"></div>Non-binary</div></div>
+    </div>
+    ${rfl('Street Address','rf-addr')}
+    ${rfl('City','rf-city')}
+    ${rfl('State','rf-state','text','CA')}
+    ${rfl('Zip Code','rf-zip')}
+    ${rfl('CSIS Student ID #','rf-csis')}
+    ${rfl('District of Residence','rf-district','text','',true)}
+    <div class="rfl fc"><label>All High Schools Attended</label><textarea id="rf-schools" placeholder="List all schools, with approximate dates if known…"></textarea></div>
+  </div>`);}
+
+function stepFamily(){return secCard('👨‍👩‍👧','#F5BB4C','Parent / Guardian Information','Primary contacts for the student',`
+  <div class="fg2">
+    <div class="rfl"><label>Relationship to Student</label>
+      <div class="chips" style="margin-top:.3rem">
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Mother</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Father</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Stepparent</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Legal Guardian</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Foster Parent</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Group Home</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Self</div>
+        <div class="chip" onclick="pickChip(this,'rf-rel')"><div class="chip-dot"></div>Other</div>
+      </div>
+    </div>
+    ${rfl('Guardian Full Name','rf-fam-name')}
+    ${rfl('Home Phone','rf-fam-home','tel')}
+    ${rfl('Cell Phone','rf-fam-cell','tel')}
+    ${rfl('Work Phone','rf-fam-work','tel')}
+    ${rfl('Email Address','rf-fam-em','email')}
+    <div class="rfl fc"><label>Mailing Address (if different from student)</label><input id="rf-fam-addr" placeholder="Street, City, State, Zip"></div>
+    <div class="rfl">
+      <label>Home Setting</label>
+      <div class="chips">
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Permanent Housing</div>
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Foster Home</div>
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Group Home</div>
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Shelter</div>
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Homeless</div>
+        <div class="chip" onclick="pickChip(this,'rf-home')"><div class="chip-dot"></div>Unknown</div>
+      </div>
+    </div>
+  </div>`);}
+
+function stepSped(){return secCard('📋','#73B661','Special Education & Language','Required for enrollment processing',`
+  <div class="fg2">
+    <div class="rfl"><label>Special Education <span class="req">*</span></label>
+      <div class="chips"><div class="chip" onclick="pickChip(this,'rf-sped')"><div class="chip-dot"></div>Yes</div><div class="chip" onclick="pickChip(this,'rf-sped')"><div class="chip-dot"></div>No</div></div>
+      <div class="hint">If yes, the most current IEP must accompany this referral. The District of Residence acknowledges that ACOE will provide Special Education services for a fee established by MOU.</div>
+    </div>
+    ${rfl('Special Ed Director Name (required if IEP)','rf-sped-dir')}
+    <div class="rfl"><label>504 Plan</label>
+      <div class="chips"><div class="chip" onclick="pickChip(this,'rf-504')"><div class="chip-dot"></div>Yes</div><div class="chip" onclick="pickChip(this,'rf-504')"><div class="chip-dot"></div>No</div></div>
+      <div class="hint">If yes, the most current 504 Plan must accompany this referral.</div>
+    </div>
+    ${rfl('Home Language','rf-lang','text','e.g. Spanish, Cantonese, Vietnamese')}
+    <div class="rfl"><label>English Proficiency</label>
+      <div class="chips">
+        <div class="chip" onclick="pickChip(this,'rf-elpro')"><div class="chip-dot"></div>English Only (EO)</div>
+        <div class="chip" onclick="pickChip(this,'rf-elpro')"><div class="chip-dot"></div>English Learner (EL)</div>
+        <div class="chip" onclick="pickChip(this,'rf-elpro')"><div class="chip-dot"></div>IFEP</div>
+        <div class="chip" onclick="pickChip(this,'rf-elpro')"><div class="chip-dot"></div>RFEP</div>
+      </div>
+    </div>
+    <div class="rfl"><label>ELPAC Initial Score</label><input id="rf-elpac-init" placeholder="Score (if EL/IFEP/RFEP)"></div>
+    <div class="rfl"><label>ELPAC Summative Score</label><input id="rf-elpac-sum" placeholder="Score"></div>
+    <div class="rfl"><label>EL Effective Start Date</label><input type="date" id="rf-el-start"></div>
+    <div class="rfl"><label>RFEP Reclassification Date</label><input type="date" id="rf-rfep-date"></div>
+  </div>`);}
+
+function stepReferrer(){return secCard('🏛️','#9BAB8E','Referring Party Information','Your contact information will be shared with ACOE staff and included in any communications about this referral',`
+  <div class="fg2">
+    <div class="rfl fc"><label>Referring Organization / Agency <span class="req">*</span></label>
+      <div class="chips">
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>AC Probation Department</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>JJC / Transition Center</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>Alameda County SSA / Foster Care</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>School District</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>Behavioral Health</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>Community Organization</div>
+        <div class="chip" onclick="pickChip(this,'rf-org-type')"><div class="chip-dot"></div>Other</div>
+      </div>
+    </div>
+    ${rfl('Name of Person Referring','rf-ref-name','text','',true)}
+    ${rfl('Title / Role','rf-ref-title')}
+    ${rfl('Cell Phone <span class="req">*</span>','rf-ref-cell','tel')}
+    ${rfl('Desk / Office Phone','rf-ref-desk','tel')}
+    ${rfl('Email Address <span class="req">*</span>','rf-ref-email','email')}
+    ${rfl('Organization Name','rf-ref-org','text',ORG||'Organization name')}
+    ${rfl('Probation Officer Name (if applicable)','rf-po-name')}
+    ${rfl('Probation Officer Phone','rf-po-ph','tel')}
+    ${rfl('Probation Officer Email','rf-po-em','email')}
+  </div>`);}
+
+function stepProfSupports(){return secCard('🏛️','#5C3D8A','Professional & System Supports','List all professionals currently engaged with this student. ACOE will use these contacts to build a coordinated care team.',`
+  <div class="fg2">
+    ${rfl('Probation Officer Name','rf-ps-po-name')}
+    ${rfl('Probation Officer Phone / Email','rf-ps-po-contact')}
+    ${rfl('Social Worker / Case Worker Name','rf-ps-sw-name')}
+    ${rfl('Social Worker Phone / Email','rf-ps-sw-contact')}
+    ${rfl('Therapist / Mental Health Provider','rf-ps-mh-name')}
+    ${rfl('Therapist Phone / Email','rf-ps-mh-contact')}
+    ${rfl('School Counselor','rf-ps-counselor')}
+    ${rfl('Special Education Case Manager','rf-ps-sped-cm')}
+    <div class="rfl fc"><label>Community-Based Organizations (CBOs) currently working with this student</label><textarea id="rf-ps-cbos" placeholder="Organization names and roles — e.g. CURYJ (Life Coach), DVP (Violence Interrupter)…"></textarea></div>
+    <div class="rfl fc"><label>Wraparound / Behavioral Services</label><textarea id="rf-ps-wrap" placeholder="Any active wraparound services, behavioral health programs, or intensive support services…"></textarea></div>
+  </div>`);}
+
+function stepStudentVoice(){return secCard('💬','#0B7691','Student Voice','This student\'s own perspective matters. If the student is able to participate in completing this section, please ask them directly. If not, share what you know about their perspective.',`
+  <div class="fg2">
+    <div class="rfl fc"><label>Student\'s Goals Upon Return to School</label><textarea id="rf-sv-goals" placeholder="What does the student want to accomplish when they return? What are they working toward?" style="min-height:80px"></textarea></div>
+    <div class="rfl fc"><label>Student-Identified Supports</label><textarea id="rf-sv-supports" placeholder="Who or what does the student say helps them? People, programs, strategies they find helpful…"></textarea></div>
+    <div class="rfl fc"><label>What Helps This Student Succeed in School?</label><textarea id="rf-sv-success" placeholder="Learning environment, relationships, structure, flexibility, specific subjects, extracurriculars…"></textarea></div>
+    <div class="rfl fc"><label>Concerns About Returning to School</label><textarea id="rf-sv-concerns" placeholder="What worries does the student (or family) have about re-engagement? Safety, peer dynamics, academic gaps, transportation, other…"></textarea></div>
+  </div>`);}
+
+function stepSafety(){return secCard('🛡️','#E5763A','Safety & Wellness Considerations','This information helps ACOE staff and school site personnel prepare an appropriate, supportive environment from day one.',`
+  <div class="fg2">
+    <div class="rfl fc"><label>Known Triggers / Stressors</label><textarea id="rf-sw-triggers" placeholder="Situations, environments, people, or topics that are known to be destabilizing for this student…" style="min-height:80px"></textarea></div>
+    <div class="rfl fc"><label>Effective De-escalation Strategies</label><textarea id="rf-sw-deesc" placeholder="What works when the student is escalating? Who can the student talk to? What approaches have been effective in the past…"></textarea></div>
+    <div class="rfl fc"><label>Mental Health Considerations</label><textarea id="rf-sw-mh" placeholder="Relevant diagnoses, current medications, mental health history relevant to school setting, trauma history if appropriate to share…"></textarea></div>
+    <div class="rfl"><label>Safety Plan on File?</label>
+      <div class="chips"><div class="chip" onclick="pickChip(this,'rf-sw-safetyplan')"><div class="chip-dot"></div>Yes — safety plan exists and will be shared</div><div class="chip" onclick="pickChip(this,'rf-sw-safetyplan')"><div class="chip-dot"></div>No — no current safety plan</div><div class="chip" onclick="pickChip(this,'rf-sw-safetyplan')"><div class="chip-dot"></div>In development</div></div>
+    </div>
+    <div class="rfl fc"><label>Additional Safety or Wellness Notes</label><textarea id="rf-sw-notes" placeholder="Anything else the receiving school or ACOE team should know to keep this student safe and supported from their first day…"></textarea></div>
+  </div>`);}
+
+
+function stepCareTeam(){
+  let items = CARE_TEAM.map((m,i)=>`
+    <div class="ct-item" id="ct-${i}">
+      <button class="ct-remove" onclick="removeCT(${i})">✕</button>
+      <div class="fg2">
+        <div class="rfl"><label>Name</label><input value="${m.name||''}" onchange="updateCT(${i},'name',this.value)" placeholder="Full name"></div>
+        <div class="rfl"><label>Role / Agency</label><input value="${m.role||''}" onchange="updateCT(${i},'role',this.value)" placeholder="e.g. Foster Care Worker, Life Coach"></div>
+        <div class="rfl"><label>Cell Phone</label><input type="tel" value="${m.cell||''}" onchange="updateCT(${i},'cell',this.value)"></div>
+        <div class="rfl"><label>Office Phone</label><input type="tel" value="${m.desk||''}" onchange="updateCT(${i},'desk',this.value)"></div>
+        <div class="rfl fc"><label>Email</label><input type="email" value="${m.email||''}" onchange="updateCT(${i},'email',this.value)"></div>
+      </div>
+    </div>`).join('');
+  return secCard('🤝','#DB383B','Care Team Contacts','Add all partners involved in this youth\'s care. ACOE will use these contacts to initiate a coordination meeting.',`
+    <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:.85rem;line-height:1.6">Include any DPOs, social workers, life coaches, therapists, family advocates, or other partners already working with this student.</p>
+    <div id="ct-list">${items}</div>
+    <button class="add-btn" onclick="addCT()">+ Add Care Team Member</button>`);}
+
+function addCT(){ CARE_TEAM.push({name:'',role:'',cell:'',desk:'',email:''}); buildStep(); }
+function removeCT(i){ CARE_TEAM.splice(i,1); buildStep(); }
+function updateCT(i,k,v){ CARE_TEAM[i][k]=v; }
+
+function stepDocs(){return secCard('📎','#0B7691','Documents & Additional Notes',`Required documentation checklist — physical documents to be submitted to SPASenrollment@acoe.org alongside this referral`,`
+  <div class="fg2">
+    <div class="rfl fc">
+      <label>Documents to be Submitted (check all that apply)</label>
+      <div class="chips" style="margin-top:.4rem">
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Most Recent Transcript</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Immunization Record (incl. Tdap booster)</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Expulsion Packet</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Attendance / Behavior / Discipline Report</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>CAASPP Testing Scores</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>ELPAC Scores</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Current IEP</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>Current 504 Plan</div>
+        <div class="chip" onclick="toggleChip(this,'rf-docs')"><div class="chip-box"></div>AB216 / AB2306 Verification</div>
+      </div>
+    </div>
+    <div class="rfl fc">
+      <label>Additional Context / Notes</label>
+      <textarea id="rf-notes" placeholder="Any additional information ACOE staff should know before contacting this student or family — safety concerns, trauma history relevant to placement, sibling situation, language needs, transportation barriers…" style="min-height:90px"></textarea>
+    </div>
+    <div class="rfl fc">
+      <label>Parent / Guardian Authorization</label>
+      <div class="chips"><div class="chip" onclick="pickChip(this,'rf-auth')"><div class="chip-dot"></div>Parent / Guardian has signed authorization to share student performance information with related agencies</div><div class="chip" onclick="pickChip(this,'rf-auth')"><div class="chip-dot"></div>Authorization pending — to be obtained</div></div>
+    </div>
+  </div>`);}
+
+// ═══════════════════ STEP NAV ═════════════════════
+function saveStepData(){
+  // Snapshot all input/select/textarea values
+  document.querySelectorAll('#ref-main input, #ref-main select, #ref-main textarea').forEach(el=>{
+    if(el.id) FORM_DATA[el.id]=el.value;
+  });
+  // Snapshot all chip selections
+  const chipGroups=['rf-reftype','rf-rehab','rf-essay','rf-gender','rf-rel','rf-home',
+    'rf-sped','rf-504','rf-elpro','rf-org-type','rf-auth','rf-docs','rf-auth','rf-sw-safetyplan'];
+  chipGroups.forEach(grp=>{
+    const single=['rf-reftype','rf-gender','rf-rel','rf-home','rf-sped','rf-504','rf-elpro','rf-org-type','rf-auth'];
+    FORM_DATA['chip:'+grp]=single.includes(grp)?getChips(grp,true):getChips(grp,false);
+  });
+  // Snapshot care team (already in CARE_TEAM array)
+}
+
+function nextStep(){
+  if(!validateStep()) return;
+  saveStepData();
+  if(CURRENT_STEP<STEPS.length-1){CURRENT_STEP++;buildStep();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function prevStep(){
+  saveStepData();
+  if(CURRENT_STEP>0){CURRENT_STEP--;buildStep();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function validateStep(){
+  if(CURRENT_STEP===0){
+    const prog=document.getElementById('rf-program');
+    if(!prog||!prog.value){toast('Please select a program.',false);return false;}
+    if(!getChips('rf-reftype',true)){toast('Please select a referral type.',false);return false;}
+  }
+  if(CURRENT_STEP===1){
+    if(!_v('rf-first')||!_v('rf-last')){toast('Please enter the student\'s legal name.',false);return false;}
+    if(!_v('rf-dob')){toast('Please enter the student\'s date of birth.',false);return false;}
+    if(!_v('rf-district')){toast('Please enter the district of residence.',false);return false;}
+  }
+  if(CURRENT_STEP===4){
+    if(!_v('rf-ref-name')){toast('Please enter your name.',false);return false;}
+    if(!_v('rf-ref-cell')&&!_v('rf-ref-email')){toast('Please enter at least a cell phone or email.',false);return false;}
+  }
+  return true;
+}
+
+// ═══════════════════ SUBMIT ═══════════════════════
+async function submitReferral(){
+  saveStepData(); // capture final step
+  const btn = S('ref-submit'); btn.disabled=true; btn.textContent='Submitting…';
+  const refId = 'ACOE-'+Date.now().toString(36).toUpperCase();
+  const fd = FORM_DATA; // shorthand
+  const gfd = (key) => fd[key]||'';
+  const gchip = (key) => { const v=fd['chip:'+key]; return Array.isArray(v)?v.join(', '):v||''; };
+
+  const rec = {
+    id: Date.now(), refId, source:'form', addedBy: WHO+' ('+ORG+')',
+    submittedAt: new Date().toISOString(),
+    schoolYear: gfd('rf-year'),
+    program: gfd('rf-program'),
+    referralType: gchip('rf-reftype'),
+    expulsion:{
+      district: gfd('rf-exp-dist'), start: gfd('rf-exp-start'), end: gfd('rf-exp-end'),
+      rehab: gchip('rf-rehab'), hrsCsl: gfd('rf-exp-hrs-csl'), hrsCS: gfd('rf-exp-hrs-cs'),
+      essay: gchip('rf-essay')
+    },
+    student:{
+      firstName: gfd('rf-first'), middleName: gfd('rf-middle'), lastName: gfd('rf-last'),
+      nickname: gfd('rf-nick'), dob: gfd('rf-dob'), age: gfd('rf-age'), grade: gfd('rf-grade'),
+      gender: gchip('rf-gender'), address: gfd('rf-addr'), city: gfd('rf-city'),
+      state: gfd('rf-state')||'CA', zip: gfd('rf-zip'), csis: gfd('rf-csis'),
+      district: gfd('rf-district'), schoolsAttended: gfd('rf-schools')
+    },
+    family:{
+      relationship: gchip('rf-rel'), name: gfd('rf-fam-name'),
+      homePhone: gfd('rf-fam-home'), cellPhone: gfd('rf-fam-cell'), workPhone: gfd('rf-fam-work'),
+      email: gfd('rf-fam-em'), address: gfd('rf-fam-addr'), homeSetting: gchip('rf-home')
+    },
+    sped:{
+      status: gchip('rf-sped'), directorName: gfd('rf-sped-dir'),
+      plan504: gchip('rf-504'), homeLanguage: gfd('rf-lang'),
+      engProficiency: gchip('rf-elpro'), elpacInit: gfd('rf-elpac-init'),
+      elpacSum: gfd('rf-elpac-sum'), elStart: gfd('rf-el-start'), rfepDate: gfd('rf-rfep-date')
+    },
+    referrer:{
+      orgType: gchip('rf-org-type'), name: gfd('rf-ref-name'), title: gfd('rf-ref-title'),
+      cell: gfd('rf-ref-cell'), desk: gfd('rf-ref-desk'),
+      email: gfd('rf-ref-email'), org: gfd('rf-ref-org'),
+      poName: gfd('rf-po-name'), poPhone: gfd('rf-po-ph'), poEmail: gfd('rf-po-em')
+    },
+    careTeam: JSON.parse(JSON.stringify(CARE_TEAM)),
+    profSupports:{
+      poName: gfd('rf-ps-po-name'), poContact: gfd('rf-ps-po-contact'),
+      swName: gfd('rf-ps-sw-name'), swContact: gfd('rf-ps-sw-contact'),
+      mhName: gfd('rf-ps-mh-name'), mhContact: gfd('rf-ps-mh-contact'),
+      counselor: gfd('rf-ps-counselor'), spedCM: gfd('rf-ps-sped-cm'),
+      cbos: gfd('rf-ps-cbos'), wraparound: gfd('rf-ps-wrap')
+    },
+    studentVoice:{
+      goals: gfd('rf-sv-goals'), supports: gfd('rf-sv-supports'),
+      successFactors: gfd('rf-sv-success'), concerns: gfd('rf-sv-concerns')
+    },
+    safety:{
+      triggers: gfd('rf-sw-triggers'), deescalation: gfd('rf-sw-deesc'),
+      mentalHealth: gfd('rf-sw-mh'), safetyPlan: gchip('rf-sw-safetyplan'),
+      notes: gfd('rf-sw-notes')
+    },
+    docs:{
+      submitted: Array.isArray(fd['chip:rf-docs'])?fd['chip:rf-docs']:[],
+      notes: gfd('rf-notes'),
+      authorization: gchip('rf-auth')
+    },
+    status:'new', assignedSite:'', acoeNotes:'', alertedStaff:[], enrolledDate:null
+  };
+
+  REFS.push(rec); localStorage.setItem('acoe_refs',JSON.stringify(REFS));
+  if(SURL) await callSheet({action:'write',data:encodeURIComponent(JSON.stringify(rec))});
+
+  // Show confirmation
+  S('ref-main').innerHTML=`<div class="cfm">
+    <div class="cfm-icon">✓</div>
+    <h2>Referral submitted.</h2>
+    <div class="cfm-ref">Reference: ${refId}</div>
+    <p>Your referral for <strong>${rec.student.firstName} ${rec.student.lastName}</strong> has been received. An ACOE enrollment team member will contact you at the information you provided.<br><br>Please also email all required documentation to <strong>SPASenrollment@acoe.org</strong> with reference <strong>${refId}</strong> in the subject line.</p>
+    <button class="btn-next" onclick="goLogin()" style="max-width:240px;margin:0 auto;display:block">Done</button>
+  </div>`;
+  btn.disabled=false;
+}
+
+// ═══════════════════ DASHBOARD ════════════════════
+function switchTab(btn){
+  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.dview').forEach(v=>v.classList.remove('on'));
+  btn.classList.add('on');
+  const t=S('dtab-'+btn.dataset.tab); if(t) t.classList.add('on');
+  if(btn.dataset.tab==='queue') renderQueue();
+  if(btn.dataset.tab==='alerts') renderAlertList();
+}
+
+let DFILTER='all';
+function setF(f,btn){DFILTER=f;document.querySelectorAll('.fchip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderQueue();}
+
+function getStatus(r){ return r.status||'new'; }
+function daysOpen(ref) {
+  if(!ref.submittedAt) return null;
+  const start = new Date(ref.submittedAt);
+  const end = ref.enrolledDate ? new Date(ref.enrolledDate) : new Date();
+  return Math.floor((end - start) / (1000*60*60*24));
+}
+function daysTag(ref) {
+  const d = daysOpen(ref);
+  if(d===null) return '';
+  if(ref.status==='enrolled') {
+    const enr = ref.enrolledDate ? new Date(ref.enrolledDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    return `<span class="btag" style="background:#e4f3e7;color:#14532d">✓ Enrolled in ${d}d${enr?' ('+enr+')':''}</span>`;
+  }
+  const bg = d>=14?'#fceaea':d>=7?'#fde8e3':d>=3?'#fef3dc':'#f1f5f9';
+  const fg = d>=14?'#991b1b':d>=7?'#9b2c14':d>=3?'#7a5200':'#475569';
+  const flag = d>=14?'🔴':d>=7?'🟠':d>=3?'🟡':'';
+  return `<span class="btag" style="background:${bg};color:${fg};font-weight:700">${flag} ${d}d open</span>`;
+}
+
+function getRefTypeSrc(r){
+  const rt=(r.referralType||'').toLowerCase();
+  if(rt.includes('probation')||rt.includes('jjc')) return 'probation';
+  if(rt.includes('foster')||rt.includes('300')||rt.includes('ssa')) return 'foster';
+  if(rt.includes('expul')||rt.includes('distri')) return 'district';
+  return 'other';
+}
+
+function renderQueue(){
+  const q=(_v('srch')).toLowerCase();
+  let list=REFS;
+  if(q) list=list.filter(r=>{
+    const n=(r.student?.firstName+' '+r.student?.lastName).toLowerCase();
+    return n.includes(q)||(r.student?.district||'').toLowerCase().includes(q)||(r.referrer?.name||'').toLowerCase().includes(q)||(r.refId||'').toLowerCase().includes(q);
+  });
+  if(DFILTER==='new')      list=list.filter(r=>r.status==='new');
+  else if(DFILTER==='pending')  list=list.filter(r=>r.status==='in-progress');
+  else if(DFILTER==='enrolled') list=list.filter(r=>r.status==='enrolled');
+  else if(DFILTER==='urgent')   list=list.filter(r=>r.status!=='enrolled'&&(daysOpen(r)||0)>=7);
+  else if(DFILTER==='probation') list=list.filter(r=>getRefTypeSrc(r)==='probation');
+  else if(DFILTER==='foster')   list=list.filter(r=>getRefTypeSrc(r)==='foster');
+  else if(DFILTER==='district') list=list.filter(r=>getRefTypeSrc(r)==='district');
+  // Sort: enrolled last, then by days open descending (oldest first = highest priority)
+  list.sort((a,b)=>{
+    if(a.status==='enrolled'&&b.status!=='enrolled')return 1;
+    if(a.status!=='enrolled'&&b.status==='enrolled')return -1;
+    return (daysOpen(b)||0)-(daysOpen(a)||0);
+  });
+
+  const T=REFS.length,NEW=REFS.filter(r=>r.status==='new').length,
+        PROG=REFS.filter(r=>r.status==='in-progress').length,
+        ENR=REFS.filter(r=>r.status==='enrolled').length;
+  const URGENT=REFS.filter(r=>r.status!=='enrolled'&&(daysOpen(r)||0)>=7).length;
+  const enrWithDays=REFS.filter(r=>r.status==='enrolled'&&r.enrolledDate&&r.submittedAt);
+  const avgDays=enrWithDays.length?Math.round(enrWithDays.reduce((s,r)=>s+daysOpen(r),0)/enrWithDays.length):null;
+  S('dstats').innerHTML=[
+    [T,'Total<br>referrals','var(--teal)'],[NEW,'New /<br>unreviewed','var(--coral)'],
+    [PROG,'In<br>progress','var(--gold-d)'],[ENR,'Enrolled','var(--green)'],
+    [URGENT>0?`🔴 ${URGENT}`:'0','7+ days<br>open',URGENT>0?'#991b1b':'var(--ink4)'],
+    [avgDays!==null?avgDays+'d':'—','Avg days to<br>enrollment','var(--teal)'],
+  ].map(([n,l,c])=>`<div class="dstat"><div class="dstat-n" style="color:${c}">${n}</div><div class="dstat-l">${l}</div></div>`).join('');
+
+  const el=S('rqueue');
+  if(!list.length){
+    el.innerHTML=`<div class="empty"><div class="empty-ico">📋</div><div style="font-size:.81rem">${REFS.length===0?'No referrals yet.':'No referrals match this filter.'}</div></div>`;
+    return;
+  }
+  el.innerHTML=[...list].reverse().map(r=>{
+    const s=r.student||{},ref=r.referrer||{};
+    const st=getStatus(r); const src=getRefTypeSrc(r);
+    const [ac,al]=AVC[r.id%AVC.length];
+    const ini=(s.firstName?.[0]||'')+(s.lastName?.[0]||'');
+    const rd=r.submittedAt?new Date(r.submittedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+    const stTag=st==='enrolled'?`<span class="btag btag-enrolled">Enrolled</span>`:st==='in-progress'?`<span class="btag btag-pending">In Progress</span>`:`<span class="btag btag-new">New</span>`;
+    const srcTag=src==='probation'?`<span class="btag btag-prob">Probation</span>`:src==='foster'?`<span class="btag btag-fc">Foster Care</span>`:src==='district'?`<span class="btag btag-dist">District</span>`:'';
+    const siteTag=r.assignedSite?`<span class="btag btag-site">${r.assignedSite}</span>`:'';
+    return `<div class="rcard">
+      <div class="rch" onclick="toggleDet(${r.id})">
+        <div class="rch-av" style="background:${al};color:${ac}">${ini}</div>
+        <div class="rch-info">
+          <div class="rch-name">${e(s.firstName)} ${e(s.lastName)} ${s.dob?`<span style="font-size:.7rem;color:var(--ink4);font-weight:400">DOB: ${s.dob}</span>`:''}</div>
+          <div class="rch-meta">${rd} · ${e(r.program||'—')} · Referred by: ${e(ref.name||'—')} (${e(ref.org||r.addedBy||'—')})</div>
+        </div>
+        <div class="rch-tags">${stTag}${srcTag}${siteTag}${daysTag(r)}</div>
+      </div>
+      <div class="rdet" id="det-${r.id}">${buildDetPanel(r)}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDet(id){ const el=S('det-'+id); if(el) el.classList.toggle('open'); }
+
+function buildDetPanel(r){
+  const s=r.student||{},fam=r.family||{},sp=r.sped||{},ref=r.referrer||{},docs=r.docs||{};
+  const g=(v)=>v||'—';
+  const infoGrid=`<div class="det-grid">
+    <div class="dg"><div class="dg-l">Legal Name</div><strong>${g(s.firstName)} ${g(s.middleName)} ${g(s.lastName)}</strong>${s.nickname?`<div style="font-size:.73rem;color:var(--ink4)">goes by: ${s.nickname}</div>`:''}</div>
+    <div class="dg"><div class="dg-l">DOB / Age / Grade</div>${g(s.dob)} · Age ${g(s.age)} · Gr. ${g(s.grade)}</div>
+    <div class="dg"><div class="dg-l">Gender</div>${g(s.gender)}</div>
+    <div class="dg"><div class="dg-l">Address</div>${g(s.address)}, ${g(s.city)} ${g(s.zip)}</div>
+    <div class="dg"><div class="dg-l">District of Residence</div>${g(s.district)}</div>
+    <div class="dg"><div class="dg-l">CSIS ID</div>${g(s.csis)}</div>
+    <div class="dg"><div class="dg-l">Program Requested</div>${g(r.program)}</div>
+    <div class="dg"><div class="dg-l">Referral Type</div>${g(r.referralType)}</div>
+    <div class="dg"><div class="dg-l">Submitted</div>${r.submittedAt?new Date(r.submittedAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—'}</div>
+    <div class="dg"><div class="dg-l">Ref ID</div><span style="font-family:monospace;font-size:.78rem;color:var(--teal)">${r.refId||r.id}</span></div>
+    <div class="dg"><div class="dg-l">Days Since Referral</div><strong style="font-size:1rem">${daysOpen(r)!==null?daysOpen(r)+' days':''}</strong>${r.status==='enrolled'&&r.enrolledDate?`<div style="font-size:.7rem;color:var(--ink4)">Enrolled ${new Date(r.enrolledDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>`:''}</div>
+  </div>`;
+
+  function secToggle(id,icon,color,title,content){
+    return `<div class="det-sec" style="--sc:${color}">
+      <div class="det-sec-hd" onclick="toggleSecBody('ds-${r.id}-${id}',this)">
+        <div class="det-sec-icon">${icon}</div>
+        <div class="det-sec-title">${title}</div>
+        <div class="det-sec-chev">▼</div>
+      </div>
+      <div class="det-sec-body" id="ds-${r.id}-${id}">
+        <div class="fg2s" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem;color:var(--ink2)">${content}</div>
+      </div>
+    </div>`;
+  }
+  function di(label,val){ return `<div><div style="font-size:.64rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.1rem">${label}</div><div>${val||'—'}</div></div>`; }
+  function difc(label,val){ return `<div style="grid-column:1/-1">${di(label,val)}</div>`; }
+
+  const famSec=secToggle('fam','👨‍👩‍👧','#F5BB4C','Family / Guardian',
+    di('Relationship',fam.relationship)+di('Name',fam.name)+di('Cell',fam.cellPhone)+di('Home Phone',fam.homePhone)+di('Work Phone',fam.workPhone)+di('Email',fam.email)+di('Home Setting',fam.homeSetting)+difc('Mailing Address',fam.address));
+  const spedSec=secToggle('sped','📋','#73B661','Special Education & Language',
+    di('IEP',sp.status)+di('504 Plan',sp.plan504)+di('SpEd Director',sp.directorName)+di('Home Language',sp.homeLanguage)+di('English Proficiency',sp.engProficiency)+di('ELPAC Initial',sp.elpacInit)+di('ELPAC Summative',sp.elpacSum));
+  const refSec=secToggle('ref','🏛️','#9BAB8E','Referring Party',
+    di('Name',ref.name)+di('Title',ref.title)+di('Organization',ref.org)+di('Cell',ref.cell)+di('Office Phone',ref.desk)+di('Email',ref.email?`<a href="mailto:${ref.email}" style="color:var(--teal)">${ref.email}</a>`:'')+di('Probation Officer',ref.poName)+di('PO Phone',ref.poPhone)+di('PO Email',ref.poEmail?`<a href="mailto:${ref.poEmail}" style="color:var(--teal)">${ref.poEmail}</a>`:''));
+  const ps=r.profSupports||{};
+  const sv=r.studentVoice||{};
+  const sw=r.safety||{};
+
+  const profSec=secToggle('prof','🏛️','#5C3D8A','Professional & System Supports',
+    di('Probation Officer',ps.poName)+di('PO Contact',ps.poContact)+
+    di('Social Worker / Case Worker',ps.swName)+di('SW Contact',ps.swContact)+
+    di('Therapist / MH Provider',ps.mhName)+di('MH Contact',ps.mhContact)+
+    di('School Counselor',ps.counselor)+di('SpEd Case Manager',ps.spedCM)+
+    difc('CBOs',ps.cbos)+difc('Wraparound / Behavioral Services',ps.wraparound));
+
+  const svSec=secToggle('sv','💬','#0B7691','Student Voice',
+    difc('Goals Upon Return',sv.goals)+difc('Student-Identified Supports',sv.supports)+
+    difc('What Helps Them Succeed',sv.successFactors)+difc('Concerns About Returning',sv.concerns));
+
+  const safetySec=secToggle('safe','🛡️','#E5763A','Safety & Wellness',
+    difc('Known Triggers / Stressors',sw.triggers)+difc('De-escalation Strategies',sw.deescalation)+
+    difc('Mental Health Considerations',sw.mentalHealth)+di('Safety Plan on File',sw.safetyPlan)+difc('Additional Notes',sw.notes));
+
+  const ctSec=secToggle('ct','🤝','#DB383B','Care Team',(r.careTeam||[]).length?
+    (r.careTeam||[]).map(m=>`<div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:.55rem .7rem;grid-column:1/-1">
+      <div style="font-weight:700;font-size:.84rem;color:var(--ink)">${m.name}</div>
+      <div style="font-size:.74rem;color:var(--teal);margin-bottom:.25rem">${m.role}</div>
+      <div style="font-size:.75rem;color:var(--ink3)">${[m.cell,m.desk,m.email].filter(Boolean).join(' · ')}</div>
+    </div>`).join('')
+    :`<div style="color:var(--ink4);font-size:.8rem;grid-column:1/-1">No care team contacts added.</div>`);
+  const docSec=secToggle('doc','📎','#0B7691','Documents & Notes',
+    difc('Documents Submitted',(docs.submitted||[]).join(', ')||'None checked')+difc('Authorization',docs.authorization)+difc('Notes',docs.notes));
+  const expSec=(r.referralType||'').toLowerCase().includes('expul')?secToggle('exp','⚠️','#DB383B','Expulsion Details',
+    di('Expelling District',r.expulsion?.district)+di('Start Date',r.expulsion?.start)+di('End Date',r.expulsion?.end)+di('Rehab Plan Required',r.expulsion?.rehab)+di('Counseling Hours',r.expulsion?.hrsCsl)+di('Community Service Hours',r.expulsion?.hrsCS)+di('Letter/Essay Required',r.expulsion?.essay)):'';
+
+  const actions=`<div class="det-actions">
+    <select class="stat-sel" onchange="updateStatus(${r.id},this.value)">
+      <option value="new" ${r.status==='new'?'selected':''}>New</option>
+      <option value="in-progress" ${r.status==='in-progress'?'selected':''}>In Progress</option>
+      <option value="contacted" ${r.status==='contacted'?'selected':''}>Family Contacted</option>
+      <option value="docs-pending" ${r.status==='docs-pending'?'selected':''}>Docs Pending</option>
+      <option value="enrolled" ${r.status==='enrolled'?'selected':''}>Enrolled</option>
+      <option value="denied" ${r.status==='denied'?'selected':''}>Not Approved</option>
+    </select>
+    <select class="site-sel" onchange="updateSite(${r.id},this.value)">
+      <option value="">— Assign to site —</option>
+      ${ACOE_PROGRAMS.map(p=>`<option value="${p}" ${r.assignedSite===p?'selected':''}>${p}</option>`).join('')}
+    </select>
+    <span style="margin-left:auto;font-size:.66rem;color:var(--ink4)">Ref: ${r.refId||r.id}</span>
+    <button class="btn btng bsm" onclick="openAlertPanel(${r.id})">✉ Alert Staff</button>
+    <button class="btn btnp bsm" onclick="emailReferrer(${r.id})">📧 Reply to Referrer</button>
+    <button class="btn btnd bsm" onclick="deleteRef(${r.id})">Remove</button>
+  </div>
+  <div style="padding:.6rem 1.05rem;background:white;border-top:1px solid var(--border)">
+    <div style="font-size:.68rem;font-weight:600;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">ACOE Staff Notes</div>
+    <textarea class="notes-ta" placeholder="Enrollment notes, care coordination updates, follow-up actions…" onchange="saveNotes(${r.id},this.value)">${e(r.acoeNotes||'')}</textarea>
+  </div>`;
+
+  return `<div style="background:white">${infoGrid}${expSec}${famSec}${spedSec}${refSec}${profSec}${svSec}${safetySec}${ctSec}${docSec}
+  <div class="det-sec" style="--sc:#3a7d44">
+    <div class="det-sec-hd" onclick="toggleSecBody('ds-${r.id}-coord',this)" style="background:#f0f9f1">
+      <div class="det-sec-icon" style="background:#3a7d44">📋</div>
+      <div class="det-sec-title">Enrollment & Care Coordination</div>
+      <div class="det-sec-chev">▼</div>
+    </div>
+    <div class="det-sec-body" id="ds-${r.id}-coord" style="display:block">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div>
+          <div style="font-size:.63rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">Enrollment Date</div>
+          <input type="date" id="enr-date-${r.id}" value="${r.enrolledDate?r.enrolledDate.split('T')[0]:''}"
+            style="border:1.5px solid var(--border2);border-radius:7px;padding:5px 9px;font-family:var(--font-body);font-size:.82rem;width:100%;outline:none"
+            onchange="setEnrollmentDate(${r.id},this.value)">
+          <div style="font-size:.7rem;color:var(--ink4);margin-top:.25rem">${daysOpen(r)!==null?'<strong>'+daysOpen(r)+'</strong> days from referral to enrollment':'Set enrollment date to track time-to-enrollment'}</div>
+        </div>
+        <div>
+          <div style="font-size:.63rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">Next Care Team Meeting</div>
+          <input type="date" id="ct-date-${r.id}" value="${r.nextCTMeeting||''}"
+            style="border:1.5px solid var(--border2);border-radius:7px;padding:5px 9px;font-family:var(--font-body);font-size:.82rem;width:100%;outline:none"
+            onchange="setCTDate(${r.id},this.value)">
+        </div>
+      </div>
+      <div style="font-size:.63rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">Coordination Log</div>
+      <div id="coord-log-${r.id}" style="max-height:160px;overflow-y:auto;margin-bottom:.5rem">
+        ${(r.coordLog||[]).length===0
+          ? '<div style="font-size:.78rem;color:var(--ink4);padding:.4rem 0">No coordination updates yet.</div>'
+          : (r.coordLog||[]).slice().reverse().map(entry=>`
+            <div style="border-left:2px solid var(--border2);padding:.3rem .6rem;margin-bottom:.4rem;font-size:.78rem">
+              <span style="font-size:.65rem;color:var(--ink4);font-family:monospace">${new Date(entry.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span>
+              <div style="color:var(--ink);margin-top:.1rem">${e(entry.text||'')}</div>
+            </div>`).join('')}
+      </div>
+      <div style="display:flex;gap:.4rem">
+        <textarea id="coord-inp-${r.id}" class="notes-ta" placeholder="Log a coordination update — school contacted, meeting scheduled, family reached, enrollment confirmed…" style="flex:1;min-height:44px;margin-top:0"></textarea>
+        <button class="btn btnp bsm" style="align-self:flex-end;flex-shrink:0" onclick="addCoordLog(${r.id})">+ Log</button>
+      </div>
+    </div>
+  </div>
+  ${actions}</div>`;
+}
+
+function toggleSecBody(id,hd){
+  const b=S(id); if(!b)return;
+  b.classList.toggle('open');
+  const ch=hd.querySelector('.det-sec-chev');
+  if(ch) ch.style.transform=b.classList.contains('open')?'rotate(180deg)':'';
+}
+
+async function updateStatus(id,val){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  r.status=val;
+  if(val==='enrolled' && !r.enrolledDate) r.enrolledDate=new Date().toISOString();
+  if(val!=='enrolled') r.enrolledDate=null;
+  await pushRef(r); renderQueue();
+  setTimeout(()=>{const d=S('det-'+id);if(d)d.classList.add('open');},60);
+  toast('Status updated: '+val);
+}
+async function setEnrollmentDate(id,val){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  r.enrolledDate=val?new Date(val).toISOString():null;
+  if(val && r.status!=='enrolled') r.status='enrolled';
+  await pushRef(r); renderQueue();
+  setTimeout(()=>{const d=S('det-'+id);if(d)d.classList.add('open');},60);
+  toast(val?'Enrollment date saved — '+daysOpen(r)+'d from referral':'Enrollment date cleared');
+}
+async function setCTDate(id,val){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  r.nextCTMeeting=val; await pushRef(r);
+  toast(val?'Care team meeting date saved':'Meeting date cleared');
+}
+async function addCoordLog(id){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  const inp=S('coord-inp-'+id); if(!inp||!inp.value.trim())return;
+  if(!r.coordLog)r.coordLog=[];
+  r.coordLog.push({ts:new Date().toISOString(),text:inp.value.trim()});
+  inp.value='';
+  await pushRef(r); renderQueue();
+  setTimeout(()=>{const d=S('det-'+id);if(d)d.classList.add('open');},60);
+  toast('Coordination update logged');
+}
+async function updateSite(id,val){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  r.assignedSite=val; await pushRef(r); renderQueue();
+  setTimeout(()=>{const d=S('det-'+id);if(d)d.classList.add('open');},60);
+  toast(val?'Assigned to '+val:'Site assignment cleared');
+}
+async function saveNotes(id,val){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  r.acoeNotes=val; await pushRef(r);
+}
+function emailReferrer(id){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  const ref=r.referrer||{}, s=r.student||{};
+  const to=ref.email||'';
+  const sub=encodeURIComponent(`ACOE Community School Referral Update – ${s.firstName} ${s.lastName} (${r.refId||r.id})`);
+  const body=encodeURIComponent(`Dear ${ref.name||'Referring Party'},\n\nThank you for submitting a referral for ${s.firstName} ${s.lastName} (Reference: ${r.refId||r.id}).\n\n[ACOE staff — add your update here]\n\nCurrent Status: ${r.status||'New'}\nAssigned Program: ${r.assignedSite||'Pending'}\n\nPlease contact us at SPASenrollment@acoe.org or 510-670-4590 with any questions.\n\nAlameda County Office of Education\nCommunity School Programs`);
+  window.open(`mailto:${to}?subject=${sub}&body=${body}`);
+}
+
+// ══════════ STAFF ALERT EMAILS ═══════════════════
+function renderAlertList(){
+  const container = S('alert-list'); if(!container)return;
+  if(!ALERT_EMAILS.length){
+    container.innerHTML=`<div style="font-size:.8rem;color:var(--ink4);padding:.5rem 0">No staff members added yet. Add names and emails below.</div>`;
+    return;
+  }
+  container.innerHTML=ALERT_EMAILS.map((m,i)=>`
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.4rem;background:var(--bg)">
+      <div style="flex:1">
+        <div style="font-size:.82rem;font-weight:600;color:var(--ink)">${e(m.name)}</div>
+        <div style="font-size:.73rem;color:var(--teal)">${e(m.email)}</div>
+      </div>
+      <button onclick="removeAlertEmail(${i})" style="background:none;border:none;color:var(--ink4);cursor:pointer;font-size:.8rem;padding:.2rem .4rem" title="Remove">✕</button>
+    </div>`).join('');
+}
+
+function addAlertEmail(){
+  const name=(_v('alert-name-inp')||'').trim();
+  const email=(_v('alert-email-inp')||'').trim();
+  if(!name||!email){toast('Please enter both a name and an email address.',false);return;}
+  if(!email.includes('@')){toast('Please enter a valid email address.',false);return;}
+  if(ALERT_EMAILS.some(m=>m.email.toLowerCase()===email.toLowerCase())){toast('That email is already on the list.',false);return;}
+  ALERT_EMAILS.push({name,email});
+  localStorage.setItem('acoe_alerts',JSON.stringify(ALERT_EMAILS));
+  S('alert-name-inp').value=''; S('alert-email-inp').value='';
+  renderAlertList(); toast('✓ '+name+' added to alert list.');
+}
+
+function removeAlertEmail(i){
+  ALERT_EMAILS.splice(i,1);
+  localStorage.setItem('acoe_alerts',JSON.stringify(ALERT_EMAILS));
+  renderAlertList();
+}
+
+let ALERT_REF_ID = null;
+
+function openAlertPanel(id){
+  const r=REFS.find(x=>x.id==id); if(!r)return;
+  ALERT_REF_ID=id;
+  const s=r.student||{};
+  S('alert-panel-sub').innerHTML=`Referral: <strong>${e(s.firstName)} ${e(s.lastName)}</strong> &nbsp;·&nbsp; <span style="font-family:monospace;font-size:.82em;color:var(--teal)">${r.refId||r.id}</span> &nbsp;·&nbsp; ${e(r.program||'Program TBD')}`;
+
+  if(!ALERT_EMAILS.length){
+    S('alert-staff-list').innerHTML=`<div style="font-size:.8rem;color:var(--ink4);padding:.5rem 0;line-height:1.6">No staff members on the alert list yet.<br>Go to the <strong>Staff Alerts</strong> tab to add team members.</div>`;
+    S('alert-send-btn').disabled=true;
+  } else {
+    S('alert-staff-list').innerHTML=`<div style="font-size:.73rem;font-weight:600;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Select who to notify:</div>`+
+      ALERT_EMAILS.map((m,i)=>`
+        <label style="display:flex;align-items:center;gap:.6rem;padding:.45rem .5rem;border:1.5px solid var(--border);border-radius:8px;margin-bottom:.35rem;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--teal)'" onmouseleave="this.style.borderColor=alertChkState(${i})?'var(--teal)':'var(--border)'">
+          <input type="checkbox" id="al-${i}" style="accent-color:var(--teal);width:15px;height:15px;cursor:pointer" onchange="updateAlertCheckBorder(this,${i})">
+          <div style="flex:1">
+            <div style="font-size:.82rem;font-weight:600;color:var(--ink)">${e(m.name)}</div>
+            <div style="font-size:.72rem;color:var(--ink3)">${e(m.email)}</div>
+          </div>
+        </label>`).join('');
+    S('alert-send-btn').disabled=false;
+  }
+  S('alert-mov').classList.add('open');
+}
+
+function alertChkState(i){ const el=S('al-'+i); return el&&el.checked; }
+function updateAlertCheckBorder(el,i){
+  const lbl=el.closest('label');
+  if(lbl) lbl.style.borderColor=el.checked?'var(--teal)':'var(--border)';
+}
+
+async function sendAlertEmails(){
+  const r=REFS.find(x=>x.id==ALERT_REF_ID); if(!r)return;
+  const selected=ALERT_EMAILS.filter((_,i)=>{const el=S('al-'+i);return el&&el.checked;});
+  if(!selected.length){toast('Please select at least one staff member.',false);return;}
+  const s=r.student||{},ref=r.referrer||{},fam=r.family||{},sp=r.sped||{};
+  const to=selected.map(m=>m.email).join(',');
+  const cc=selected.map(m=>m.name+' <'+m.email+'>').join('; ');
+  const sub=encodeURIComponent(`[ACOE REFERRAL ALERT] New Referral – ${s.firstName} ${s.lastName} (${r.refId||r.id})`);
+  const body=encodeURIComponent(
+    `ACOE COMMUNITY SCHOOL REFERRAL ALERT\n`+
+    `=======================================\n\n`+
+    `Reference ID:       ${r.refId||r.id}\n`+
+    `Submitted:          ${r.submittedAt?new Date(r.submittedAt).toLocaleString('en-US'):''}\n`+
+    `Program Requested:  ${r.program||'—'}\n`+
+    `Referral Type:      ${r.referralType||'—'}\n\n`+
+    `STUDENT\n`+
+    `-------\n`+
+    `Name:     ${s.firstName} ${s.middleName?s.middleName+' ':''} ${s.lastName}${s.nickname?' (goes by: '+s.nickname+')':''}\n`+
+    `DOB:      ${s.dob||'—'}   Age: ${s.age||'—'}   Grade: ${s.grade||'—'}   Gender: ${s.gender||'—'}\n`+
+    `Address:  ${s.address||'—'}, ${s.city||'—'} ${s.zip||''}\n`+
+    `District: ${s.district||'—'}\n`+
+    `CSIS ID:  ${s.csis||'—'}\n`+
+    `IEP:      ${sp.status||'—'}     504: ${sp.plan504||'—'}     Lang: ${sp.homeLanguage||'—'}     EL Status: ${sp.engProficiency||'—'}\n\n`+
+    `FAMILY / GUARDIAN\n`+
+    `-----------------\n`+
+    `${fam.relationship||'Guardian'}: ${fam.name||'—'}\n`+
+    `Cell: ${fam.cellPhone||'—'}   Home: ${fam.homePhone||'—'}   Email: ${fam.email||'—'}\n`+
+    `Home Setting: ${fam.homeSetting||'—'}\n\n`+
+    `REFERRING PARTY\n`+
+    `---------------\n`+
+    `${ref.name||'—'} · ${ref.title||'—'} · ${ref.org||'—'}\n`+
+    `Cell: ${ref.cell||'—'}   Office: ${ref.desk||'—'}   Email: ${ref.email||'—'}\n`+
+    (ref.poName?`Probation Officer: ${ref.poName}   Phone: ${ref.poPhone||'—'}   Email: ${ref.poEmail||'—'}\n`:'')+
+    `\nCARE TEAM\n`+
+    `---------\n`+
+    ((r.careTeam||[]).length?(r.careTeam||[]).map(m=>`${m.name} (${m.role||'—'}) – Cell: ${m.cell||'—'} – Email: ${m.email||'—'}`).join('\n'):'None provided')+
+    `\n\nDOCUMENTS SUBMITTED\n`+
+    `--------------------\n`+
+    `${((r.docs||{}).submitted||[]).join(', ')||'None checked'}\n`+
+    `\nNOTES\n-----\n${(r.docs||{}).notes||'None'}\n\n`+
+    `ACOE STAFF NOTES\n----------------\n${r.acoeNotes||'None yet'}\n\n`+
+    `---------------------------------------\n`+
+    `Current Status: ${r.status||'New'}\n`+
+    `Assigned Site: ${r.assignedSite||'Not yet assigned'}\n\n`+
+    `Please log in to the ACOE Referral Dashboard to view full details and update the record.\n`+
+    `Questions: SPASenrollment@acoe.org | 510-670-4590`
+  );
+  window.open(`mailto:${to}?subject=${sub}&body=${body}`);
+
+  // Log the alert on the record
+  if(!r.alertedStaff) r.alertedStaff=[];
+  r.alertedStaff.push({ sentAt:new Date().toISOString(), sentTo:selected.map(m=>m.name+'<'+m.email+'>').join(', ') });
+  await pushRef(r);
+  S('alert-mov').classList.remove('open');
+  toast('✓ Alert email opened for: '+selected.map(m=>m.name).join(', '));
+}
+
+// ══════════ MANUAL ADD ═══════════════════════════
+async function saveManual(){
+  const first=_v('mf-first'),last=_v('mf-last');
+  if(!first||!last){toast('Please enter first and last name.',false);return;}
+  const btn=S('msave-btn'); btn.disabled=true; btn.textContent='Saving…';
+  const rec={
+    id:Date.now(), refId:'ACOE-'+Date.now().toString(36).toUpperCase(),
+    source:'staff', addedBy:WHO+'(ACOE)',
+    submittedAt:new Date().toISOString(),
+    program:_v('mf-program'), referralType:_v('mf-reftype'),
+    student:{firstName:first,lastName:last,dob:_v('mf-dob'),age:_v('mf-age'),grade:_v('mf-grade'),gender:_v('mf-gender'),district:_v('mf-district')},
+    family:{}, sped:{},
+    referrer:{name:_v('mf-ref-name'),cell:_v('mf-ref-ph'),email:_v('mf-ref-em'),org:''},
+    careTeam:[], docs:{notes:_v('mf-notes'),submitted:[]},
+    status:'new', assignedSite:'', acoeNotes:''
+  };
+  REFS.push(rec); localStorage.setItem('acoe_refs',JSON.stringify(REFS));
+  if(SURL) await callSheet({action:'write',data:encodeURIComponent(JSON.stringify(rec))});
+  btn.disabled=false; btn.textContent='Add Referral →';
+  clearManual();
+  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.dview').forEach(v=>v.classList.remove('on'));
+  document.querySelector('[data-tab="queue"]').classList.add('on');
+  S('dtab-queue').classList.add('on');
+  renderQueue(); toast('✓ Referral added.');
+}
+function clearManual(){
+  ['mf-first','mf-last','mf-dob','mf-age','mf-grade','mf-district','mf-ref-name','mf-ref-ph','mf-ref-em','mf-notes'].forEach(id=>{const e=S(id);if(e)e.value='';});
+  ['mf-gender','mf-reftype','mf-program'].forEach(id=>{const e=S(id);if(e)e.value='';});
+}
+
+// ═══════════════════ SHEET ════════════════════════
+function callSheet(params){
+  if(!SURL) return Promise.resolve(null);
+  return new Promise(resolve=>{
+    const cb='_acoeRef'+Date.now()+Math.floor(Math.random()*99999);
+    let done=false;
+    const finish=data=>{if(done)return;done=true;try{delete window[cb];}catch(ex){}const el=S(cb);if(el)el.remove();resolve(data);};
+    window[cb]=finish;
+    const qs=Object.entries({...params,callback:cb}).map(([k,v])=>k+'='+encodeURIComponent(v==null?'':String(v))).join('&');
+    const sc=document.createElement('script');sc.id=cb;sc.onerror=()=>finish(null);sc.src=SURL+'?'+qs;document.head.appendChild(sc);
+    setTimeout(()=>finish(null),15000);
+  });
+}
+function updateSyncBar(){
+  const bar=S('sbar'),msg=S('sbar-msg');if(!bar||!msg)return;
+  if(SURL){bar.className='sbar ok';msg.innerHTML='✓ Connected to Google Sheet — all referrals sync in real time.';const btn=bar.querySelector('button');if(btn)btn.style.display='none';}
+  else{bar.className='sbar';msg.innerHTML='⚠ Not connected to Google Sheet. Click ⚙ Sheet to connect.';}
+}
+async function loadFromSheet(){
+  const btn=S('ref-btn');if(btn){btn.textContent='↻ Loading…';btn.disabled=true;}
+  const data=await callSheet({action:'read'});
+  if(btn){btn.textContent='↻ Refresh';btn.disabled=false;}
+  if(Array.isArray(data)&&data.length>0){
+    REFS=data;localStorage.setItem('acoe_refs',JSON.stringify(REFS));renderQueue();
+    toast('✓ Loaded '+REFS.length+' referral'+(REFS.length!==1?'s':'')+' from Sheet.');
+  }else{toast('Using cached data.',false);renderQueue();}
+}
+async function pushRef(r){
+  const idx=REFS.findIndex(x=>x.id===r.id);if(idx>=0)REFS[idx]=r;else REFS.push(r);
+  localStorage.setItem('acoe_refs',JSON.stringify(REFS));
+  if(!SURL)return;
+  await callSheet({action:'write',data:encodeURIComponent(JSON.stringify(r))});
+}
+async function deleteRef(id){
+  if(!confirm('Remove this referral?'))return;
+  REFS=REFS.filter(r=>r.id!==id);localStorage.setItem('acoe_refs',JSON.stringify(REFS));
+  if(SURL)await callSheet({action:'delete',id:String(id)});
+  renderQueue();toast('Referral removed.');
+}
+function openSetup(){S('url-inp').value=SURL||'';S('script-block').textContent=GAS;S('setup-mov').classList.add('open');}
+function closeSetup(){S('setup-mov').classList.remove('open');}
+function connectSheet(){
+  const url=_v('url-inp');
+  if(!url.startsWith('https://script.google.com/')){toast('Paste the full Apps Script URL.',false);return;}
+  SURL=url;localStorage.setItem('acoe_url',url);closeSetup();updateSyncBar();toast('Connected! Click ↻ Refresh.');
+}
+async function testConn(){
+  const url=_v('url-inp');if(!url){toast('Paste a URL first.',false);return;}
+  const prev=SURL;SURL=url;const r=await callSheet({action:'ping'});SURL=prev;
+  if(r&&r.ok)toast('✓ Connection works!');else toast('❌ No response. Check URL, access=Anyone, new deployment created.',false);
+}
+
+// ═══════════════════ EXPORT ═══════════════════════
+function exportCSV(){
+  if(!REFS.length){toast('No referrals to export.',false);return;}
+  const hdr='Ref ID,Submitted,Status,Program,Referral Type,First Name,Last Name,DOB,Age,Grade,Gender,District,Address,City,IEP,504 Plan,Home Language,EL Status,Home Setting,Family Name,Family Cell,Family Email,Referrer Name,Referrer Org,Referrer Cell,Referrer Email,PO Name,PO Phone,Care Team,Documents Submitted,Notes,ACOE Notes,Assigned Site';
+  const rows=REFS.map(r=>{
+    const s=r.student||{},fam=r.family||{},sp=r.sped||{},ref=r.referrer||{},d=r.docs||{};
+    const ct=(r.careTeam||[]).map(m=>m.name+(m.role?' ('+m.role+')':'')).join('; ');
+    return [r.refId||r.id,new Date(r.submittedAt).toLocaleDateString('en-US'),r.status||'new',r.program||'',r.referralType||'',
+      s.firstName||'',s.lastName||'',s.dob||'',s.age||'',s.grade||'',s.gender||'',s.district||'',s.address||'',s.city||'',
+      sp.status||'',sp.plan504||'',sp.homeLanguage||'',sp.engProficiency||'',fam.homeSetting||'',
+      fam.name||'',fam.cellPhone||'',fam.email||'',ref.name||'',ref.org||'',ref.cell||'',ref.email||'',ref.poName||'',ref.poPhone||'',
+      `"${ct}"`,`"${(d.submitted||[]).join(', ')}"`,`"${(d.notes||'').replace(/"/g,'""')}"`,`"${(r.acoeNotes||'').replace(/"/g,'""')}"`,r.assignedSite||''
+    ].join(',');
+  }).join('\n');
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([hdr+'\n'+rows],{type:'text/csv'})),download:'ACOE-Referrals-'+new Date().toLocaleDateString('en-US').replace(/\//g,'-')+'.csv'});a.click();toast('CSV exported.');
+}
+
+// ═══════════════════ UTILS ════════════════════════
+function _v(id){const el=S(id);return el?(el.value||'').trim():'';}
+function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,ok=true){
+  const t=S('toast');t.textContent=msg;t.style.borderLeftColor=ok?'var(--teal)':'var(--coral)';
+  t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),4200);
+}
+
+// ═══════════════════ APPS SCRIPT ══════════════════
+const GAS=`var SHEET_ID = 'YOUR_SHEET_ID';
+var SHEET_NAME = 'Referrals';
+
+// All columns — one per field
+var HEADERS = [
+  'Ref ID','Submitted At','Status','Assigned Site','Source','Added By',
+  'Program','School Year','Referral Type',
+  // Student
+  'First Name','Middle Name','Last Name','Nickname','DOB','Age','Grade','Gender',
+  'Address','City','State','Zip','CSIS ID','District of Residence','Schools Attended',
+  // Family
+  'Family Relationship','Family Name','Family Home Phone','Family Cell','Family Work Phone',
+  'Family Email','Family Address','Home Setting',
+  // SpEd
+  'IEP Status','SpEd Director Name','504 Plan','Home Language','English Proficiency',
+  'ELPAC Initial','ELPAC Summative','EL Start Date','RFEP Date',
+  // Referrer
+  'Org Type','Referrer Name','Referrer Title','Referrer Cell','Referrer Desk',
+  'Referrer Email','Referrer Org','PO Name','PO Phone','PO Email',
+  // Expulsion
+  'Exp District','Exp Start','Exp End','Rehab Plan','Counseling Hrs','Community Svc Hrs','Essay Required',
+  // Care Team
+  'Care Team (summary)',
+  // Docs
+  'Documents Submitted','Guardian Authorization','Notes',
+  // Professional Supports
+  'PS: Probation Officer','PS: PO Contact','PS: Social Worker','PS: SW Contact',
+  'PS: MH Provider','PS: MH Contact','PS: Counselor','PS: SpEd Case Manager',
+  'PS: CBOs','PS: Wraparound Services',
+  // Student Voice
+  'SV: Goals Upon Return','SV: Student Supports','SV: Success Factors','SV: Concerns',
+  // Safety & Wellness
+  'Safety: Triggers','Safety: De-escalation','Safety: Mental Health',
+  'Safety: Safety Plan','Safety: Notes',
+  // Enrollment tracking
+  'Enrolled Date','Days Referral to Enrollment','Next CT Meeting',
+  // Coordination log
+  'Coordination Log',
+  // ACOE
+  'ACOE Notes','Alerted Staff',
+  // Backup
+  'JSON_Backup'
+];
+
+function doGet(e) {
+  var p = e.parameter, cb = p.callback || 'cb';
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  try {
+    if (p.action === 'ping') return jp(cb, {ok:true});
+    if (p.action === 'read') {
+      var sh = ss.getSheetByName(SHEET_NAME);
+      if (!sh) return jp(cb, []);
+      var v = sh.getDataRange().getValues();
+      if (v.length < 2) return jp(cb, []);
+      var out = [];
+      for (var i = 1; i < v.length; i++) {
+        if (!v[i][0]) continue;
+        try { out.push(JSON.parse(v[i][v[i].length-1])); } catch(ex) {}
+      }
+      return jp(cb, out);
+    }
+    if (p.action === 'write') {
+      var d = JSON.parse(decodeURIComponent(p.data));
+      var sh = getOrCreate(ss);
+      var row = makeRow(d);
+      var v = sh.getDataRange().getValues();
+      var found = false;
+      for (var i = 1; i < v.length; i++) {
+        if (String(v[i][0]) === String(d.refId||d.id)) {
+          sh.getRange(i+1,1,1,row.length).setValues([row]);
+          found = true; break;
+        }
+      }
+      if (!found) sh.appendRow(row);
+      return jp(cb, {ok:true});
+    }
+    if (p.action === 'delete') {
+      var sh = ss.getSheetByName(SHEET_NAME);
+      if (sh) {
+        var v = sh.getDataRange().getValues();
+        for (var i = 1; i < v.length; i++) {
+          if (String(v[i][0]) === String(p.id)) { sh.deleteRow(i+1); break; }
+        }
+      }
+      return jp(cb, {ok:true});
+    }
+  } catch(err) { return jp(cb, {ok:false, error:err.message}); }
+  return jp(cb, {ok:false});
+}
+
+function makeRow(d) {
+  var s = d.student||{}, fam = d.family||{}, sp = d.sped||{};
+  var ref = d.referrer||{}, exp = d.expulsion||{}, docs = d.docs||{};
+  var ct = (d.careTeam||[]).map(function(m){return m.name+(m.role?' ('+m.role+')':'')+': '+[m.cell,m.email].filter(Boolean).join(', ');}).join(' | ');
+  return [
+    d.refId||d.id, d.submittedAt||'', d.status||'new', d.assignedSite||'',
+    d.source||'', d.addedBy||'', d.program||'', d.schoolYear||'', d.referralType||'',
+    s.firstName||'', s.middleName||'', s.lastName||'', s.nickname||'',
+    s.dob||'', s.age||'', s.grade||'', s.gender||'',
+    s.address||'', s.city||'', s.state||'', s.zip||'', s.csis||'', s.district||'', s.schoolsAttended||'',
+    fam.relationship||'', fam.name||'', fam.homePhone||'', fam.cellPhone||'', fam.workPhone||'',
+    fam.email||'', fam.address||'', fam.homeSetting||'',
+    sp.status||'', sp.directorName||'', sp.plan504||'', sp.homeLanguage||'', sp.engProficiency||'',
+    sp.elpacInit||'', sp.elpacSum||'', sp.elStart||'', sp.rfepDate||'',
+    ref.orgType||'', ref.name||'', ref.title||'', ref.cell||'', ref.desk||'',
+    ref.email||'', ref.org||'', ref.poName||'', ref.poPhone||'', ref.poEmail||'',
+    exp.district||'', exp.start||'', exp.end||'', exp.rehab||'', exp.hrsCsl||'', exp.hrsCS||'', exp.essay||'',
+    ct, (docs.submitted||[]).join(', '), docs.authorization||'', docs.notes||'',
+    d.acoeNotes||'',
+    (d.alertedStaff||[]).map(function(a){return a.sentTo+' @ '+a.sentAt;}).join(' | '),
+    // Professional Supports
+    (function(){var ps=d.profSupports||{};
+      return [ps.poName||'',ps.poContact||'',ps.swName||'',ps.swContact||'',
+              ps.mhName||'',ps.mhContact||'',ps.counselor||'',ps.spedCM||'',
+              ps.cbos||'',ps.wraparound||''];
+    })(),
+    // Student Voice
+    (function(){var sv=d.studentVoice||{};
+      return [sv.goals||'',sv.supports||'',sv.successFactors||'',sv.concerns||''];
+    })(),
+    // Safety
+    (function(){var sw=d.safety||{};
+      return [sw.triggers||'',sw.deescalation||'',sw.mentalHealth||'',sw.safetyPlan||'',sw.notes||''];
+    })(),
+    // Enrollment tracking
+    d.enrolledDate||'',
+    (d.enrolledDate&&d.submittedAt)?Math.floor((new Date(d.enrolledDate)-new Date(d.submittedAt))/(1000*60*60*24)):'',
+    d.nextCTMeeting||'',
+    (d.coordLog||[]).map(function(e){return new Date(e.ts).toLocaleDateString('en-US')+': '+e.text;}).join(' | '),
+  ];
+}
+
+function getOrCreate(ss) {
+  var sh = ss.getSheetByName(SHEET_NAME);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_NAME);
+    sh.appendRow(HEADERS);
+    sh.getRange(1,1,1,HEADERS.length).setFontWeight('bold').setBackground('#0B7691').setFontColor('#ffffff').setWrap(true);
+    sh.setFrozenRows(1); sh.setRowHeight(1, 48);
+    sh.setColumnWidth(1,120); sh.setColumnWidth(2,160); sh.setColumnWidth(3,100);
+    sh.setColumnWidth(4,160); sh.setColumnWidth(7,180); sh.setColumnWidth(9,180);
+    sh.setColumnWidth(10,120); sh.setColumnWidth(12,120);
+    sh.hideColumns(HEADERS.length);
+  }
+  return sh;
+}
+
+function jp(cb, data) {
+  return ContentService.createTextOutput(cb+'('+JSON.stringify(data)+');').setMimeType(ContentService.MimeType.JAVASCRIPT);
+}`;
+
+// Init
+showLogin();
+</script>
+</body>
+</html>
